@@ -38,5 +38,5 @@ script:
  - cmake --build . -- -j2 || exit 1
  - pushd html_generator
  - if [ $NO_RTTI != "ON" ]; then
-     ./html_generator `pwd` || exit 1;
+     ./html_generator "$(pwd)" || exit 1;
    fi
