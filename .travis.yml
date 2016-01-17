@@ -37,8 +37,8 @@ script:
  - pushd html_generator
  - ./html_generator "$(pwd)/test" || exit 1
  - if [ "$CPP" == "g++-5" ] && [ "$BUILD_TYPE" == "Release" ]; then
-     message=$(git log --oneline -1)
-     echo $message
+     message=$(git log --oneline -1);
+     echo $message;
      git clone https://github.com/TyRoXx/tyroxx.github.io.git || exit 1;
      cd tyroxx.github.io;
      ../html_generator "$(pwd)" || exit 1;
