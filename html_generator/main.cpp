@@ -3,6 +3,8 @@
 #include <ventura/open.hpp>
 #include <ventura/file_operations.hpp>
 #include <silicium/sink/file_sink.hpp>
+#include <silicium/sink/throwing_sink.hpp>
+#include <silicium/html/tree.hpp>
 
 namespace
 {
@@ -17,8 +19,20 @@ namespace
 		}
 
 		Si::file_sink index_sink(index.get().handle);
-		return Si::append(index_sink,
-		                  "<html><head><title>TyRoXx' blog</title></head><body><h1>Hello, world!</h1></body></html>");
+		using namespace Si::html;
+		auto document = tag("html", tag("head", tag("title", text("TyRoXx' blog"))) +
+		                                tag("body", tag("h1", text("Hello, world!"))));
+		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
+		try
+		{
+			document.generate(erased_sink);
+			return {};
+		}
+		catch (boost::system::system_error const &ex)
+		{
+			// TODO: do this without an exception
+			return ex.code();
+		}
 	}
 }
 
