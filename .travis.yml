@@ -1,0 +1,42 @@
+language: cpp
+os:
+ - linux
+sudo: false
+notifications:
+ email:
+  on_success: change # [always|never|change] # default: change
+  on_failure: always # [always|never|change] # default: always
+
+addons:
+  apt:
+    sources:
+    - boost-latest
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-5
+    - g++-4.9
+    - g++-4.8
+    - libboost1.55-all-dev
+    
+env:
+ - CPP=g++-5   BUILD_TYPE=Release
+ - CPP=g++-5   BUILD_TYPE=Release
+ - CPP=g++-5   BUILD_TYPE=Release
+ - CPP=g++-5   BUILD_TYPE=Debug
+ - CPP=g++-4.9 BUILD_TYPE=Release
+ - CPP=g++-4.9 BUILD_TYPE=Debug
+ - CPP=g++-4.8 BUILD_TYPE=Release
+ - CPP=g++-4.8 BUILD_TYPE=Debug
+
+before_install:
+ - git submodule update --init --recursive
+
+script:
+ - mkdir build
+ - pushd build
+ - CXX=$CPP cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE || exit 1
+ - cmake --build . -- -j2 || exit 1
+ - pushd html_generator
+ - if [ $NO_RTTI != "ON" ]; then
+     ./html_generator `pwd` || exit 1;
+   fi
