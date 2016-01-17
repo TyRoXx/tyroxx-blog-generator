@@ -37,6 +37,5 @@ script:
  - CXX=$CPP cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE || exit 1
  - cmake --build . -- -j2 || exit 1
  - pushd html_generator
- - if [ $NO_RTTI != "ON" ]; then
-     ./html_generator "$(pwd)" || exit 1;
-   fi
+ - ./html_generator "$(pwd)" || exit 1
+
