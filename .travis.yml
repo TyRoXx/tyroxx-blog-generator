@@ -36,7 +36,7 @@ script:
  - cmake --build . -- -j2 || exit 1
  - pushd html_generator
  - ./html_generator "$(pwd)/test" || exit 1
- - if [ ($CPP == g++-5) -a ($BUILD_TYPE == Release) ]; then 
+ - if [ "$CPP" == "g++-5" ] && [ "$BUILD_TYPE" == "Release" ]; then 
      git clone https://github.com/TyRoXx/tyroxx.github.io.git || exit 1
      cd tyroxx.github.io
      ../html_generator "$(pwd)" || exit 1
