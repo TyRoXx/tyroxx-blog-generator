@@ -20,8 +20,8 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		auto document = tag("html", tag("head", tag("title", text("TyRoXx' blog"))) +
-		                                tag("body", tag("h1", text("Hello, world!"))));
+		auto const document = tag("html", tag("head", tag("title", text("TyRoXx' blog"))) +
+		                                      tag("body", tag("h1", text("Hello, world!"))));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
 		{
