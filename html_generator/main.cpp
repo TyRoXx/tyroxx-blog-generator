@@ -8,6 +8,12 @@
 
 namespace
 {
+	template <std::size_t N>
+	auto make_anchor_attributes(char const(&name)[N])
+	{
+		return Si::html::attribute("name", name) + Si::html::attribute("href", std::string("#") + name);
+	}
+
 	boost::system::error_code generate_all_html(ventura::absolute_path const &existing_root)
 	{
 		ventura::absolute_path const index_path = existing_root / ventura::relative_path("index.html");
@@ -20,8 +26,13 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		auto const document = tag("html", tag("head", tag("title", text("TyRoXx' blog"))) +
-		                                      tag("body", tag("h1", text("Hello, world!"))));
+		char const title[] = "TyRoXx' blog";
+		auto const document = tag(
+		    "html", tag("head", tag("title", text(title))) +
+		                tag("body", tag("h1", text(title)) + tag("h2", text("Drafts")) +
+		                                tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
+		                                              text("How to use travis-ci.org for C++"))) +
+		                                tag("p", text("......"))));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
 		{
