@@ -27,12 +27,14 @@ namespace
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
-		auto const document = tag(
-		    "html", tag("head", tag("title", text(title))) +
-		                tag("body", tag("h1", text(title)) + tag("h2", text("Drafts")) +
-		                                tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
-		                                              text("How to use travis-ci.org for C++"))) +
-		                                tag("p", text("......"))));
+		auto drafts = tag("h2", text("Drafts")) +
+		              tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
+		                            text("How to use travis-ci.org for C++"))) +
+		              tag("p", text("......"));
+		auto articles = tag("h2", text("Articles"));
+		auto const document =
+		    tag("html", tag("head", tag("title", text(title))) +
+		                    tag("body", tag("h1", text(title)) + std::move(drafts) + std::move(articles)));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
 		{
