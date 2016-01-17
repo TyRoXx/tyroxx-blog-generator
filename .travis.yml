@@ -38,13 +38,12 @@ script:
  - ./html_generator "$(pwd)/test" || exit 1
  - if [ "$CPP" == "g++-5" ] && [ "$BUILD_TYPE" == "Release" ]; then
      message=$(git log --oneline -1);
-     echo $message;
      git clone https://github.com/TyRoXx/tyroxx.github.io.git || exit 1;
      cd tyroxx.github.io;
      ../html_generator "$(pwd)" || exit 1;
      git add -A || exit 1;
      if [[ ! -z $(git status -s) ]]; then
-       git -c user.name='travis' -c user.email='travis@example.org' commit -m $message || exit 1;
+       git -c user.name='travis' -c user.email='travis@example.org' commit -m "$message" || exit 1;
        git push -q https://TyRoXx:$GITHUB_TOKEN2@github.com/TyRoXx/tyroxx.github.io.git master &> /dev/null || exit 1;
      fi;
    fi
