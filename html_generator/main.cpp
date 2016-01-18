@@ -17,7 +17,8 @@ namespace
 	boost::system::error_code generate_all_html(ventura::absolute_path const &existing_root)
 	{
 		ventura::absolute_path const index_path = existing_root / ventura::relative_path("index.html");
-		Si::error_or<Si::file_handle> const index = ventura::overwrite_file(ventura::safe_c_str(index_path));
+		Si::error_or<Si::file_handle> const index =
+		    ventura::overwrite_file(ventura::safe_c_str(to_os_string(index_path)));
 		if (index.is_error())
 		{
 			std::cerr << "Could not overwrite file " << index_path << '\n';
