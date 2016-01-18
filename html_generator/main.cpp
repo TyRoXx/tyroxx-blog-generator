@@ -36,7 +36,7 @@ namespace
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
-		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finishes articles yet.");
+		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finished articles yet.");
 		auto drafts = tag("h2", text("Drafts")) +
 		              tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
 		                            text("How to use travis-ci.org for C++"))) +
