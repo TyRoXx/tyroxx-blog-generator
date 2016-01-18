@@ -68,6 +68,7 @@ set(VENTURA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/ventura" CACHE
 include_directories(SYSTEM ${VENTURA_INCLUDE_DIR})
 
 add_subdirectory("html_generator")
+add_subdirectory("system_test")
 
 if(WIN32)
 	set(CLANG_FORMAT "C:/Program Files/LLVM/bin/clang-format.exe" CACHE TYPE PATH)

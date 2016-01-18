@@ -25,7 +25,8 @@ before_test:
 
 test_script:
   - cd html_generator\Release
-  - .\html_generator.exe `chdir`
+  - cp ../../system_test/Release/system_test.exe .
+  - .\system_test.exe
 
 after_test:
 
