@@ -17,6 +17,7 @@ namespace
 	template <std::size_t N>
 	auto make_link_paragraph(std::string const &protocol, char const(&address_without_protocol)[N])
 	{
+		using namespace Si::html;
 		return tag("p",
 		           tag("a", attribute("href", protocol + address_without_protocol), text(address_without_protocol)));
 	}
