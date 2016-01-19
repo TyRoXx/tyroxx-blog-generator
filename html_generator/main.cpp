@@ -22,6 +22,21 @@ namespace
 		           tag("a", attribute("href", protocol + address_without_protocol), text(address_without_protocol)));
 	}
 
+	template <std::size_t N>
+	auto make_code_snippet(char const(&code)[N])
+	{
+		using namespace Si::html;
+		std::size_t const lines = std::count(std::begin(code), std::end(code), '\n') + 1;
+		std::string line_numbers;
+		for (std::size_t i = 1; i <= lines; ++i)
+		{
+			line_numbers += boost::lexical_cast<std::string>(i);
+			line_numbers += '\n';
+		}
+		return tag("pre", attribute("style", "float:left"), text(std::move(line_numbers))) +
+		       tag("pre", attribute("style", "float:left;margin-left:30px"), text(code));
+	}
+
 	boost::system::error_code generate_all_html(ventura::absolute_path const &existing_root)
 	{
 		ventura::absolute_path const index_path = existing_root / ventura::relative_path("index.html");
@@ -37,10 +52,12 @@ namespace
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
 		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finished articles yet.");
-		auto drafts = tag("h2", text("Drafts")) +
-		              tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
-		                            text("How to use travis-ci.org for C++"))) +
-		              tag("p", text("......"));
+		auto drafts =
+		    tag("h2", text("Drafts")) + tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
+		                                              text("How to use travis-ci.org for C++"))) +
+		    tag("p",
+		        text("......") +
+		            make_code_snippet("int main()\n{\n  Si::file_sink index_sink(index.get().handle);\n  test();\n}"));
 		auto links = make_link_paragraph("https://", "github.com/TyRoXx") +
 		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
 		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
