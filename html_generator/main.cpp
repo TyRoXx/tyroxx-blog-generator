@@ -52,18 +52,18 @@ namespace
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
 		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finished articles yet.");
-		auto drafts =
-		    tag("h2", text("Drafts")) + tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
-		                                              text("How to use travis-ci.org for C++"))) +
-		    tag("p",
-		        text("......") +
-		            make_code_snippet("int main()\n{\n  Si::file_sink index_sink(index.get().handle);\n  test();\n}"));
+		auto drafts = tag("h2", text("Drafts")) +
+		              tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
+		                            text("How to use travis-ci.org for C++"))) +
+		              tag("p", text("......")) +
+		              make_code_snippet("int main()\n{\n  Si::file_sink index_sink(index.get().handle);\n  test();\n}");
 		auto links = make_link_paragraph("https://", "github.com/TyRoXx") +
 		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
 		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
-		auto const document = tag("html", tag("head", tag("title", text(title))) +
-		                                      tag("body", tag("h1", text(title)) + std::move(links) +
-		                                                      std::move(articles) + std::move(drafts)));
+		auto const document =
+		    raw("<!DOCTYPE html>") + tag("html", tag("head", tag("title", text(title))) +
+		                                             tag("body", tag("h1", text(title)) + std::move(links) +
+		                                                             std::move(articles) + std::move(drafts)));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
 		{
