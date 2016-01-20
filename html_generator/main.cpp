@@ -52,11 +52,21 @@ namespace
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
 		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finished articles yet.");
-		auto drafts = tag("h2", text("Drafts")) +
-		              tag("h3", tag("a", make_anchor_attributes("how-to-use-travis-ci-org-for-cpp"),
-		                            text("How to use travis-ci.org for C++"))) +
-		              tag("p", text("......")) +
-		              make_code_snippet("int main()\n{\n  Si::file_sink index_sink(index.get().handle);\n  test();\n}");
+		auto drafts =
+		    tag("h2", text("Drafts")) +
+		    tag("h3", tag("a", make_anchor_attributes("one-tab-is-four-spaces"), text("One tab is four spaces"))) +
+		    tag("p", text("The following program demonstrates that one tab is in fact equivalent to four spaces:")) +
+		    make_code_snippet("#include <iostream>\n"
+		                      "#define tab\n"
+		                      "int main()\n"
+		                      "{\n"
+		                      "tab std::cout << \"one tab \"\n"
+		                      "    std::cout << \"is four spaces\\n\";\n"
+		                      "}") +
+		    tag("p", attribute("style", "clear:left"),
+		        text("Both ways achieve exactly the same result: Indenting by four characters. Only the characters "
+		             "used for indentation are different. The old argument has "
+		             "finally been settled."));
 		auto links = make_link_paragraph("https://", "github.com/TyRoXx") +
 		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
 		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
