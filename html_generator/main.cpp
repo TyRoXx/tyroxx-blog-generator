@@ -70,10 +70,13 @@ namespace
 		auto links = make_link_paragraph("https://", "github.com/TyRoXx") +
 		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
 		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
-		auto const document =
-		    raw("<!DOCTYPE html>") + tag("html", tag("head", tag("title", text(title))) +
-		                                             tag("body", tag("h1", text(title)) + std::move(links) +
-		                                                             std::move(articles) + std::move(drafts)));
+		auto style = "body {\n"
+		             "	font-size: 1em;\n"
+		             "}";
+		auto head = tag("head", tag("meta", attribute("charset", "utf-8"), empty) + tag("title", text(title)) +
+		                            tag("style", text(style)));
+		auto body = tag("body", tag("h1", text(title)) + std::move(links) + std::move(articles) + std::move(drafts));
+		auto const document = raw("<!DOCTYPE html>") + tag("html", std::move(head) + std::move(body));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
 		{
