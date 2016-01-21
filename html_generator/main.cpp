@@ -71,8 +71,11 @@ namespace
 		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
 		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
 		auto style = "body {\n"
-		             "	font-size: 1em;\n"
-		             "}";
+		             "	font-size: 16px;\n"
+		             "}\n"
+		             "p {\n"
+		             "	line-height: 1.6;\n"
+		             "}\n";
 		auto head = tag("head", tag("meta", attribute("charset", "utf-8"), empty) + tag("title", text(title)) +
 		                            tag("style", text(style)));
 		auto body = tag("body", tag("h1", text(title)) + std::move(links) + std::move(articles) + std::move(drafts));
