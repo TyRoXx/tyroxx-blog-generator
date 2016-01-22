@@ -9,17 +9,46 @@
 namespace
 {
 	template <std::size_t N>
-	auto make_anchor_attributes(char const(&name)[N])
+	auto anchor_attributes(char const(&name)[N])
 	{
 		return Si::html::attribute("name", name) + Si::html::attribute("href", std::string("#") + name);
 	}
 
+	template <class Element>
+	auto p(Element &&content)
+	{
+		return Si::html::tag("p", std::forward<Element>(content));
+	}
+
+	template <class Element, class Attributes>
+	auto p(Attributes &&attributes, Element &&content)
+	{
+		return Si::html::tag("p", std::forward<Attributes>(attributes), std::forward<Element>(content));
+	}
+
+	template <class Element>
+	auto h1(Element &&content)
+	{
+		return Si::html::tag("h1", std::forward<Element>(content));
+	}
+
+	template <class Element>
+	auto h2(Element &&content)
+	{
+		return Si::html::tag("h2", std::forward<Element>(content));
+	}
+
+	template <class Element>
+	auto h3(Element &&content)
+	{
+		return Si::html::tag("h3", std::forward<Element>(content));
+	}
+
 	template <std::size_t N>
-	auto make_link_paragraph(std::string const &protocol, char const(&address_without_protocol)[N])
+	auto link(std::string const &protocol, char const(&address_without_protocol)[N])
 	{
 		using namespace Si::html;
-		return tag("p",
-		           tag("a", attribute("href", protocol + address_without_protocol), text(address_without_protocol)));
+		return p(tag("a", attribute("href", protocol + address_without_protocol), text(address_without_protocol)));
 	}
 
 	template <std::size_t N>
@@ -51,11 +80,11 @@ namespace
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
-		auto articles = tag("h2", text("Articles")) + text("Sorry, there are no finished articles yet.");
+		auto articles = h2(text("Articles")) + text("Sorry, there are no finished articles yet.");
 		auto drafts =
-		    tag("h2", text("Drafts")) +
-		    tag("h3", tag("a", make_anchor_attributes("one-tab-is-four-spaces"), text("One tab is four spaces"))) +
-		    tag("p", text("The following program demonstrates that one tab is in fact equivalent to four spaces:")) +
+		    h2(text("Drafts")) +
+		    h3(tag("a", anchor_attributes("one-tab-is-four-spaces"), text("One tab is four spaces"))) +
+		    p(text("The following program demonstrates that one tab is in fact equivalent to four spaces:")) +
 		    make_code_snippet("#include <iostream>\n"
 		                      "#define tab\n"
 		                      "int main()\n"
@@ -63,13 +92,12 @@ namespace
 		                      "tab std::cout << \"one tab \"\n"
 		                      "    std::cout << \"is four spaces\\n\";\n"
 		                      "}") +
-		    tag("p", attribute("style", "clear:left"),
-		        text("Both ways achieve exactly the same result: Indenting by four characters. Only the characters "
-		             "used for indentation are different. The old argument has "
-		             "finally been settled."));
-		auto links = make_link_paragraph("https://", "github.com/TyRoXx") +
-		             make_link_paragraph("https://", "twitter.com/tyroxxxx") +
-		             make_link_paragraph("mailto:", "tyroxxxx@gmail.com");
+		    p(attribute("style", "clear:left"),
+		      text("Both ways achieve exactly the same result: Indenting by four characters. Only the characters "
+		           "used for indentation are different. The old argument has "
+		           "finally been settled."));
+		auto links = link("https://", "github.com/TyRoXx") + link("https://", "twitter.com/tyroxxxx") +
+		             link("mailto:", "tyroxxxx@gmail.com");
 		auto style = "body {\n"
 		             "	font-size: 16px;\n"
 		             "}\n"
@@ -78,7 +106,7 @@ namespace
 		             "}\n";
 		auto head = tag("head", tag("meta", attribute("charset", "utf-8"), empty) + tag("title", text(title)) +
 		                            tag("style", text(style)));
-		auto body = tag("body", tag("h1", text(title)) + std::move(links) + std::move(articles) + std::move(drafts));
+		auto body = tag("body", h1(text(title)) + std::move(links) + std::move(articles) + std::move(drafts));
 		auto const document = raw("<!DOCTYPE html>") + tag("html", std::move(head) + std::move(body));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(Si::make_throwing_sink(index_sink));
 		try
