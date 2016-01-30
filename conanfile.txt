@@ -1,5 +1,6 @@
 [requires]
 Boost/1.60.0@lasote/stable
+silicium/0.2@TyRoXx/master
 
 [generators]
 cmake
