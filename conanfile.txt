@@ -1,6 +1,6 @@
 [requires]
-Boost/1.60.0@lasote/stable
 silicium/0.2@TyRoXx/master
+ventura/0.1@TyRoXx/master
 
 [generators]
 cmake
