@@ -81,8 +81,7 @@ namespace
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
 		auto articles = h2(text("Articles")) + text("Sorry, there are no finished articles yet.");
-		auto drafts =
-		    h2(text("Drafts")) +
+		auto four_spaces =
 		    h3(tag("a", anchor_attributes("one-tab-is-four-spaces"), text("One tab is four spaces"))) +
 		    p(text("The following program demonstrates that one tab is in fact equivalent to four spaces:")) +
 		    make_code_snippet("#include <iostream>\n"
@@ -96,6 +95,7 @@ namespace
 		      text("Both ways achieve exactly the same result: Indenting by four characters. Only the characters "
 		           "used for indentation are different. The old argument has "
 		           "finally been settled."));
+		auto drafts = h2(text("Drafts")) + std::move(four_spaces);
 		auto links = link("https://", "github.com/TyRoXx") + link("https://", "twitter.com/tyroxxxx") +
 		             link("mailto:", "tyroxxxx@gmail.com");
 		auto style = "body {\n"
