@@ -100,6 +100,8 @@ namespace
 		             link("mailto:", "tyroxxxx@gmail.com");
 		auto style = "body {\n"
 		             "	font-size: 16px;\n"
+		             "	margin: 40px auto;\n"
+		             "	max-width: 650px;\n"
 		             "}\n"
 		             "p {\n"
 		             "	line-height: 1.6;\n"
