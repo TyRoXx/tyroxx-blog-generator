@@ -1,6 +1,5 @@
 [requires]
-silicium/0.2@TyRoXx/master
-ventura/0.1@TyRoXx/master
+ventura/0.2@TyRoXx/master
 
 [generators]
 cmake
