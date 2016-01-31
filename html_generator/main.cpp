@@ -63,10 +63,9 @@ namespace
 			line_numbers += boost::lexical_cast<std::string>(i);
 			line_numbers += '\n';
 		}
-		return tag("div", tag("pre", attribute("style", "float:left"), text(std::move(line_numbers))) +
-		                      tag("pre", attribute("style", "float:left;margin-left:20px"), text(code)) +
-		                      tag("div", attribute("style", "clear:both"),
-		                          /*TODO: encode the div correctly in HTML*/ text(" ")));
+		return tag("div", attribute("style", "white-space:nowrap"),
+		           tag("pre", attribute("style", "display:inline-block"), text(std::move(line_numbers))) +
+		               tag("pre", attribute("style", "display:inline-block;margin-left:20px"), text(code)));
 	}
 
 	boost::system::error_code generate_all_html(ventura::absolute_path const &snippets_source_code,
@@ -159,12 +158,9 @@ namespace
 		    snippet_from_file("throwing_constructor_0.cpp");
 		auto drafts = h2(text("Drafts")) + std::move(throwing_constructor) + std::move(four_spaces);
 
-		auto todo =
-		    h2(text("Technical to do list")) +
-		    tag("ul",
-		        tag("li", text("compile the code snippets")) + tag("li", text("color the code snippets")) +
-		            tag("li", text("clang-format the code snippets")) +
-		            tag("li", text("do the line numbers in a better way (use float correctly or use something else)")));
+		auto todo = h2(text("Technical to do list")) + tag("ul", tag("li", text("compile the code snippets")) +
+		                                                             tag("li", text("color the code snippets")) +
+		                                                             tag("li", text("clang-format the code snippets")));
 
 		auto links = link("https://", "github.com/TyRoXx") + link("https://", "twitter.com/tyroxxxx") +
 		             link("mailto:", "tyroxxxx@gmail.com");
