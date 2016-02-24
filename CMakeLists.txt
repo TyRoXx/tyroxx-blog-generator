@@ -67,6 +67,9 @@ include_directories(SYSTEM ${VENTURA_INCLUDE_DIR})
 add_subdirectory("html_generator")
 add_subdirectory("system_test")
 
+file(GLOB snippets "snippets/*.*")
+set(formatted ${formatted} ${snippets})
+
 if(WIN32)
 	set(CLANG_FORMAT "C:/Program Files/LLVM/bin/clang-format.exe" CACHE TYPE PATH)
 else()
