@@ -27,7 +27,7 @@ env:
  - CPP=g++-4.8 BUILD_TYPE=Debug
 
 before_install:
- - git submodule update --init --recursive
+ - git submodule update --init
 
 script:
  - mkdir build
