@@ -75,7 +75,7 @@ namespace
 		        text(std::move(line_numbers))) +
 		        tag("pre",
 		            attribute("style", "display:inline-block;margin-left:20px"),
-		            text(code)));
+		            tag("code", text(code))));
 	}
 
 	boost::system::error_code
