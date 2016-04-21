@@ -39,7 +39,7 @@ script:
  - CXX=$CPP CC=$GCC conan install --build silicium --build ventura -s compiler=gcc $CONAN .. || exit 1
  - CXX=$CPP CC=$GCC cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE || exit 1
  - cmake --build . -- -j2 || exit 1
- - pushd html_generator
+ - pushd bin
  - ./html_generator "$(pwd)/test" || exit 1
  - if [ "$CPP" == "g++-5" ] && [ "$BUILD_TYPE" == "Release" ]; then
      message=$(git log --oneline -1);
