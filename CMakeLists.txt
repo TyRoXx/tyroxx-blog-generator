@@ -48,6 +48,12 @@ else()
 	endif()
 	include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 	link_directories(${Boost_LIBRARY_DIR})
+
+	set(SILICIUM_INCLUDE_DIR "" CACHE PATH "")
+	include_directories(SYSTEM ${SILICIUM_INCLUDE_DIR})
+
+	set(VENTURA_INCLUDE_DIR "" CACHE PATH "")
+	include_directories(SYSTEM ${VENTURA_INCLUDE_DIR})
 endif()
 
 if(WIN32)
@@ -57,22 +63,11 @@ if(WIN32)
 	add_definitions("-DBOOST_ASIO_HAS_IOCP")
 endif()
 
-set(SILICIUM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/silicium" CACHE PATH "")
-
-include_directories(SYSTEM ${SILICIUM_INCLUDE_DIR})
-
-set(VENTURA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/ventura" CACHE PATH "")
-include_directories(SYSTEM ${VENTURA_INCLUDE_DIR})
-
 add_subdirectory("html_generator")
 add_subdirectory("system_test")
 
 file(GLOB snippets "snippets/*.*")
 set(formatted ${formatted} ${snippets})
 
-if(WIN32)
-	set(CLANG_FORMAT "C:/Program Files/LLVM/bin/clang-format.exe" CACHE TYPE PATH)
-else()
-	set(CLANG_FORMAT "clang-format-3.7" CACHE TYPE PATH)
-endif()
+find_program(CLANG_FORMAT NAMES clang-format clang-format-3.7 PATHS "C:/Program Files/LLVM/bin")
 add_custom_target(clang-format COMMAND ${CLANG_FORMAT} -i ${formatted} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

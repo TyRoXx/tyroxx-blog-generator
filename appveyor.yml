@@ -1,35 +1,21 @@
-version: 0.1.{build}-{branch}
+version: 1.0.{build}
+platform:
+  - x64
 
-branches:
-  except:
-    - gh_pages
-
-skip_tags: true
-
-clone_depth: 1
-
-os: Windows Server 2012 R2
-
-before_build:
-  - git submodule update --init
-  - mkdir build
-  - cd build
-  - cmake -G "Visual Studio 14" -DBOOST_ROOT=C:\Libraries\boost_1_59_0 -DBOOST_LIBRARYDIR=C:\Libraries\boost_1_59_0\lib32-msvc-14.0 ..
+install:
+  - cmd: echo "Downloading conan..."
+  - ps: wget https://s3-eu-west-1.amazonaws.com/conanio-production/downloads/conan-win_0_8_6.exe -OutFile conan_installer.exe
+  - cmd: conan_installer.exe /VERYSILENT
+  - cmd: set PATH=%PATH%;C:\Program Files (x86)\Conan\conan
+  - cmd: conan --version
 
 build_script:
-  - cmake --build . --config Release
-
-after_build:
-
-before_test:
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: conan install .. --build silicium --build ventura
+  - cmd: cmake ../ -G "Visual Studio 14 2015 Win64"
+  - cmd: cmake --build . --config Release
 
 test_script:
-  - cd html_generator\Release
-  - cp ../../system_test/Release/system_test.exe .
-  - .\system_test.exe
-
-after_test:
-
-on_success:
-on_failure:
-on_finish:
+  - cmd: cd bin
+  - cmd: system_test.exe
