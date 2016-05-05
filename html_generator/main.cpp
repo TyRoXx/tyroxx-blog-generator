@@ -78,6 +78,64 @@ namespace
 		            tag("code", text(code))));
 	}
 
+	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
+	                       char const *name)
+	{
+		ventura::absolute_path const full_name =
+		    snippets_source_code / ventura::relative_path(name);
+		Si::variant<std::vector<char>, boost::system::error_code,
+		            ventura::read_file_problem> read_result =
+		    ventura::read_file(ventura::safe_c_str(to_os_string(full_name)));
+		std::vector<char> content;
+		Si::visit<void>(
+		    read_result,
+		    [&content](std::vector<char> &read_content)
+		    {
+			    content = std::move(read_content);
+			},
+		    [&full_name](boost::system::error_code const error)
+		    {
+			    boost::throw_exception(std::runtime_error(
+			        "Could not read file " + to_utf8_string(full_name) + ": " +
+			        boost::lexical_cast<std::string>(error)));
+			},
+		    [&full_name](ventura::read_file_problem const problem)
+		    {
+			    switch (problem)
+			    {
+			    case ventura::read_file_problem::file_too_large_for_memory:
+				    boost::throw_exception(
+				        std::runtime_error("File " + to_utf8_string(full_name) +
+				                           " cannot be read into memory"));
+
+			    case ventura::read_file_problem::concurrent_write_detected:
+				    boost::throw_exception(std::runtime_error(
+				        "File " + to_utf8_string(full_name) +
+				        " cannot be read because it seems to be accessed "
+				        "concurrently"));
+			    }
+			});
+
+		std::string clean;
+		for (char c : content)
+		{
+			switch (c)
+			{
+			case '\t':
+				clean += "    ";
+				break;
+
+			case '\r':
+				break;
+
+			default:
+				clean += c;
+				break;
+			}
+		}
+		return make_code_snippet(clean);
+	}
+
 	boost::system::error_code
 	generate_all_html(ventura::absolute_path const &snippets_source_code,
 	                  ventura::absolute_path const &existing_output_root)
@@ -92,64 +150,6 @@ namespace
 			return index.error();
 		}
 
-		auto const snippet_from_file = [&snippets_source_code](char const *name)
-		{
-			ventura::absolute_path const full_name =
-			    snippets_source_code / ventura::relative_path(name);
-			Si::variant<std::vector<char>, boost::system::error_code,
-			            ventura::read_file_problem> read_result =
-			    ventura::read_file(
-			        ventura::safe_c_str(to_os_string(full_name)));
-			std::vector<char> content;
-			Si::visit<void>(
-			    read_result,
-			    [&content](std::vector<char> &read_content)
-			    {
-				    content = std::move(read_content);
-				},
-			    [&full_name](boost::system::error_code const error)
-			    {
-				    boost::throw_exception(std::runtime_error(
-				        "Could not read file " + to_utf8_string(full_name) +
-				        ": " + boost::lexical_cast<std::string>(error)));
-				},
-			    [&full_name](ventura::read_file_problem const problem)
-			    {
-				    switch (problem)
-				    {
-				    case ventura::read_file_problem::file_too_large_for_memory:
-					    boost::throw_exception(std::runtime_error(
-					        "File " + to_utf8_string(full_name) +
-					        " cannot be read into memory"));
-
-				    case ventura::read_file_problem::concurrent_write_detected:
-					    boost::throw_exception(std::runtime_error(
-					        "File " + to_utf8_string(full_name) +
-					        " cannot be read because it seems to be accessed "
-					        "concurrently"));
-				    }
-				});
-
-			std::string clean;
-			for (char c : content)
-			{
-				switch (c)
-				{
-				case '\t':
-					clean += "    ";
-					break;
-
-				case '\r':
-					break;
-
-				default:
-					clean += c;
-					break;
-				}
-			}
-			return make_code_snippet(clean);
-		};
-
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 		char const title[] = "TyRoXx' blog";
@@ -160,7 +160,8 @@ namespace
 		auto throwing_constructor =
 		    h3(tag("a", anchor_attributes("throwing-constructor"),
 		           text("Throwing from a constructor"))) +
-		    snippet_from_file("throwing_constructor_0.cpp");
+		    snippet_from_file(snippets_source_code,
+		                      "throwing_constructor_0.cpp");
 		auto drafts = h2(text("Drafts")) + std::move(throwing_constructor);
 
 		auto todo =
