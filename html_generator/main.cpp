@@ -157,12 +157,11 @@ namespace
 		auto articles = h2(text("Articles")) +
 		                text("Sorry, there are no finished articles yet.");
 
-		auto throwing_constructor =
-		    h3(tag("a", anchor_attributes("throwing-constructor"),
-		           text("Throwing from a constructor"))) +
-		    snippet_from_file(snippets_source_code,
-		                      "throwing_constructor_0.cpp");
-		auto drafts = h2(text("Drafts")) + std::move(throwing_constructor);
+		auto drafts = h2(text("Drafts")) +
+#include "input-validation.hpp"
+		              +
+#include "throwing-constructor.hpp"
+		    ;
 
 		auto todo =
 		    h2(text("Technical to do list")) +
