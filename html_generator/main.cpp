@@ -47,6 +47,12 @@ namespace
 		return Si::html::tag("h3", std::forward<Element>(content));
 	}
 
+	template <class Element>
+	auto h4(Element &&content)
+	{
+		return Si::html::tag("h4", std::forward<Element>(content));
+	}
+
 	template <std::size_t N>
 	auto link(std::string const &protocol,
 	          char const(&address_without_protocol)[N])
