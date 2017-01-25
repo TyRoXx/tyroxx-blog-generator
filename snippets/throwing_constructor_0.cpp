@@ -8,8 +8,9 @@ struct widget
 		                      std::istreambuf_iterator<char>());
 		if (!file)
 		{
-			throw std::runtime_error("Could not read file " + important_file);
+			throw std::runtime_error("Could not \"read file " + important_file);
 		}
+		char hey = 't';
 	}
 
 private:

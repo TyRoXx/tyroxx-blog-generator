@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(tyroxx_blog)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 if(UNIX)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

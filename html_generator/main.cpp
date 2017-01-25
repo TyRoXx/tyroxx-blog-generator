@@ -6,6 +6,7 @@
 #include <silicium/sink/file_sink.hpp>
 #include <silicium/sink/throwing_sink.hpp>
 #include <silicium/html/tree.hpp>
+#include "tags.hpp"
 
 namespace
 {
@@ -16,43 +17,6 @@ namespace
 		       Si::html::attribute("href", std::string("#") + name);
 	}
 
-	template <class Element>
-	auto p(Element &&content)
-	{
-		return Si::html::tag("p", std::forward<Element>(content));
-	}
-
-	template <class Element, class Attributes>
-	auto p(Attributes &&attributes, Element &&content)
-	{
-		return Si::html::tag("p", std::forward<Attributes>(attributes),
-		                     std::forward<Element>(content));
-	}
-
-	template <class Element>
-	auto h1(Element &&content)
-	{
-		return Si::html::tag("h1", std::forward<Element>(content));
-	}
-
-	template <class Element>
-	auto h2(Element &&content)
-	{
-		return Si::html::tag("h2", std::forward<Element>(content));
-	}
-
-	template <class Element>
-	auto h3(Element &&content)
-	{
-		return Si::html::tag("h3", std::forward<Element>(content));
-	}
-
-	template <class Element>
-	auto h4(Element &&content)
-	{
-		return Si::html::tag("h4", std::forward<Element>(content));
-	}
-
 	template <std::size_t N>
 	auto link(std::string const &protocol,
 	          char const(&address_without_protocol)[N])
@@ -61,6 +25,99 @@ namespace
 		return p(tag("a",
 		             attribute("href", protocol + address_without_protocol),
 		             text(address_without_protocol)));
+	}
+
+	enum class token_type
+	{
+		identifier,
+		string,
+		eof,
+		other
+	};
+
+	struct token
+	{
+		std::string content;
+		token_type type;
+	};
+
+	template <class InputIterator>
+	token find_next_token(InputIterator begin, InputIterator end)
+	{
+		if (begin == end)
+		{
+			return {"", token_type::eof};
+		}
+		if (isalnum(*begin))
+		{
+			return {std::string(begin, std::find_if(begin + 1, end,
+			                                        [](char c)
+			                                        {
+				                                        return !isalnum(c);
+				                                    })),
+			        token_type::identifier};
+		}
+		if (*begin == '"')
+		{
+			InputIterator endIndex = std::find_if(begin + 1, end, [](char c)
+			                                      {
+				                                      static bool escaped =
+				                                          false;
+				                                      if (c == '\\')
+				                                      {
+					                                      escaped = true;
+				                                      }
+				                                      if (!escaped)
+				                                      {
+					                                      return c == '"';
+				                                      }
+				                                      else
+				                                      {
+					                                      escaped = false;
+				                                      }
+				                                      return true;
+				                                  });
+			if (endIndex == end)
+			{
+				throw std::invalid_argument("Number of quotes must be even");
+			}
+			return {std::string(begin, endIndex + 1), token_type::string};
+		}
+		if (*begin == '\'')
+		{
+			InputIterator endIndex = std::find_if(begin + 1, end, [](char c)
+			                                      {
+				                                      static bool escaped =
+				                                          false;
+				                                      if (c == '\\')
+				                                      {
+					                                      escaped = true;
+				                                      }
+				                                      if (!escaped)
+				                                      {
+					                                      return c == '\'';
+				                                      }
+				                                      else
+				                                      {
+					                                      escaped = false;
+				                                      }
+				                                      return true;
+				                                  });
+			if (endIndex == end)
+			{
+				throw std::invalid_argument(
+				    "Number of single quotes must be even");
+			}
+			return {std::string(begin, endIndex + 1), token_type::string};
+		}
+		return {std::string(begin, std::find_if(begin + 1, end,
+		                                        [](char c)
+		                                        {
+			                                        return isalnum(c) ||
+			                                               c == '"' ||
+			                                               c == '\'';
+			                                    })),
+		        token_type::other};
 	}
 
 	template <class StringLike>
@@ -75,14 +132,108 @@ namespace
 			line_numbers += boost::lexical_cast<std::string>(i);
 			line_numbers += '\n';
 		}
-		return tag(
-		    "div", attribute("style", "white-space:nowrap"),
-		    tag("pre", attribute("style", "display:inline-block"),
-		        text(std::move(line_numbers))) +
-		        tag("pre",
-		            attribute("style", "display:inline-block;margin-left:20px"),
-		            tag("code", text(code))));
+		auto codeTag = tag(
+		    "code",
+		    dynamic([code](code_sink &sink)
+		            {
+			            static const std::string keywords[] = {
+			                "alignas",      "alignof",
+			                "and",          "and_eq",
+			                "asm",          "auto",
+			                "bitand",       "bitor",
+			                "bool",         "break",
+			                "case",         "catch",
+			                "char",         "char16_t",
+			                "char32_t",     "class",
+			                "compl",        "const",
+			                "constexpr",    "const_cast",
+			                "continue",     "decltype",
+			                "default",      "delete",
+			                "do",           "double",
+			                "dynamic_cast", "else",
+			                "enum",         "explicit",
+			                "export",       "extern",
+			                "false",        "float",
+			                "for",          "friend",
+			                "goto",         "if",
+			                "inline",       "int",
+			                "long",         "mutable",
+			                "namespace",    "new",
+			                "noexcept",     "not",
+			                "not_eq",       "nullptr",
+			                "operator",     "or",
+			                "or_eq",        "private",
+			                "protected",    "public",
+			                "register",     "reinterpret_cast",
+			                "return",       "short",
+			                "signed",       "sizeof",
+			                "static",       "static_assert",
+			                "static_cast",  "struct",
+			                "switch",       "template",
+			                "this",         "thread_local",
+			                "throw",        "true",
+			                "try",          "typedef",
+			                "typeid",       "typename",
+			                "union",        "unsigned",
+			                "using",        "virtual",
+			                "void",         "volatile",
+			                "wchar_t",      "while",
+			                "xor",          "xor_eq",
+			                "override",     "final"};
+			            auto i = code.begin();
+			            for (;;)
+			            {
+				            token t = find_next_token(i, code.end());
+				            switch (t.type)
+				            {
+				            case token_type::eof:
+					            return;
+				            case token_type::other:
+					            text(t.content).generate(sink);
+					            break;
+				            case token_type::string:
+					            span(attribute("class", "stringLiteral"),
+					                 text(t.content))
+					                .generate(sink);
+					            break;
+				            case token_type::identifier:
+					            if (std::find(std::begin(keywords),
+					                          std::end(keywords),
+					                          t.content) != std::end(keywords))
+					            {
+						            span(attribute("class", "keyword"),
+						                 text(t.content))
+						                .generate(sink);
+					            }
+					            else
+					            {
+						            text(t.content).generate(sink);
+					            }
+				            }
+				            i += t.content.size();
+			            }
+			        }));
+
+		return div(cl("sourcecodeSnippet"),
+		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
+		               pre(cl("code"), codeTag) + br());
 	}
+
+	/*auto generate_content(std::string const fileName)
+	{
+	    using namespace Si::html;
+	    if (fileName == "contacts.html")
+	    {
+	        return div(link("https://", "github.com/TyRoXx") +
+	                   link("https://", "twitter.com/tyroxxxx") +
+	                   link("mailto:", "tyroxxxx@gmail.com"));
+	    }
+	    else
+	    {
+	        return div(
+	            tag("a", attribute("href", "contact.html"), text("Contacts")));
+	    }
+	}*/
 
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
 	                       char const *name)
@@ -144,10 +295,11 @@ namespace
 
 	boost::system::error_code
 	generate_all_html(ventura::absolute_path const &snippets_source_code,
-	                  ventura::absolute_path const &existing_output_root)
+	                  ventura::absolute_path const &existing_output_root,
+	                  std::string const fileName)
 	{
 		ventura::absolute_path const index_path =
-		    existing_output_root / ventura::relative_path("index.html");
+		    existing_output_root / ventura::relative_path(fileName);
 		Si::error_or<Si::file_handle> const index = ventura::overwrite_file(
 		    ventura::safe_c_str(to_os_string(index_path)));
 		if (index.is_error())
@@ -158,41 +310,66 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		char const title[] = "TyRoXx' blog";
+		std::string siteTitle = "TyRoXx' blog";
 
-		auto articles = h2(text("Articles")) +
-		                text("Sorry, there are no finished articles yet.");
+		// auto menuBox = generate_content(fileName);
 
-		auto drafts = h2(text("Drafts")) +
-#include "input-validation.hpp"
+		auto articles =
+		    h2("Articles") + p("Sorry, there are no finished articles yet.");
+
+		auto drafts = h2("Drafts") +
+#include "pages/input-validation.hpp"
 		              +
-#include "throwing-constructor.hpp"
+#include "pages/throwing-constructor.hpp"
 		    ;
 
 		auto todo =
-		    h2(text("Technical to do list")) +
-		    tag("ul", tag("li", text("compile the code snippets")) +
-		                  tag("li", text("color the code snippets")) +
-		                  tag("li", text("clang-format the code snippets")));
-
-		auto links = link("https://", "github.com/TyRoXx") +
-		             link("https://", "twitter.com/tyroxxxx") +
-		             link("mailto:", "tyroxxxx@gmail.com");
+		    h2("Technical to do list") +
+		    ul(li("compile the code snippets") + li("color the code snippets") +
+		       li("clang-format the code snippets"));
 		auto style = "body {\n"
 		             "	font-size: 16px;\n"
-		             "	max-width: 650px;\n"
+		             "  width: 90%;\n"
+		             "  margin: auto;\n"
 		             "}\n"
 		             "p {\n"
 		             "	line-height: 1.6;\n"
+		             "}\n"
+		             ".sourcecodeSnippet{\n"
+		             "  background-color: silver;\n"
+		             "  overflow: auto;"
+		             "  white-space:nowrap;"
+		             "  border: 1px solid black;"
+		             "}\n"
+		             ".sourcecodeSnippet .lineNumbers{\n"
+		             "  display:inline-block;\n"
+		             "  text-align: right;"
+		             "  padding: 0 .5em;"
+		             "  border-right: 1px solid black;"
+		             "}\n"
+		             ".sourcecodeSnippet .code{\n"
+		             "  display:inline-block;\n"
+		             "  margin-left: 1em;"
+		             "}\n"
+		             "code .keyword{\n"
+		             "	color: blue;\n"
+		             "	font-weight: bold;\n"
+		             "}\n"
+		             "code .stringLiteral{\n"
+		             "	color: #46A346;\n"
 		             "}\n";
-		auto head = tag(
-		    "head", tag("meta", attribute("charset", "utf-8"), empty) +
-		                tag("title", text(title)) + tag("style", text(style)));
-		auto body = tag("body", h1(text(title)) + std::move(links) +
-		                            std::move(articles) + std::move(drafts) +
-		                            std::move(todo));
-		auto const document = raw("<!DOCTYPE html>") +
-		                      tag("html", std::move(head) + std::move(body));
+
+		auto headContent =
+		    head(tag("meta", attribute("charset", "utf-8"), empty) +
+		         title(siteTitle) +
+		         // tag("link", attribute("rel", "stylesheet") +
+		         // attribute("href", "style.css"), empty)
+		         tag("style", text(style)));
+		auto bodyContent = body(h1(siteTitle) + std::move(articles) +
+		                        std::move(drafts) + std::move(todo));
+		auto const document =
+		    raw("<!DOCTYPE html>") +
+		    html(std::move(headContent) + std::move(bodyContent));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(
 		    Si::make_throwing_sink(index_sink));
 		try
@@ -268,8 +445,14 @@ int main(int argc, char **argv)
 		    generate_all_html(*ventura::parent(*ventura::parent(
 		                          *ventura::absolute_path::create(__FILE__))) /
 		                          ventura::relative_path("snippets"),
-		                      *output_root);
-		if (!!ec)
+		                      *output_root, "index.html");
+		boost::system::error_code const ec2 =
+		    generate_all_html(*ventura::parent(*ventura::parent(
+		                          *ventura::absolute_path::create(__FILE__))) /
+		                          ventura::relative_path("snippets"),
+		                      *output_root, "contact.html");
+
+		if (!!ec && !!ec2)
 		{
 			std::cerr << ec << '\n';
 			return 1;
