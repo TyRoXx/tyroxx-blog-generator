@@ -59,24 +59,24 @@ namespace
 		}
 		if (*begin == '"')
 		{
-			InputIterator endIndex = std::find_if(begin + 1, end, [](char c)
-			                                      {
-				                                      static bool escaped =
-				                                          false;
-				                                      if (c == '\\')
-				                                      {
-					                                      escaped = true;
-				                                      }
-				                                      if (!escaped)
-				                                      {
-					                                      return c == '"';
-				                                      }
-				                                      else
-				                                      {
-					                                      escaped = false;
-				                                      }
-				                                      return true;
-				                                  });
+			bool escaped = false;
+			InputIterator endIndex =
+			    std::find_if(begin + 1, end, [&escaped](char c)
+			                 {
+				                 if (c == '\\')
+				                 {
+					                 escaped = true;
+				                 }
+				                 if (!escaped)
+				                 {
+					                 return c == '"';
+				                 }
+				                 else
+				                 {
+					                 escaped = false;
+				                 }
+				                 return true;
+				             });
 			if (endIndex == end)
 			{
 				throw std::invalid_argument("Number of quotes must be even");
@@ -85,24 +85,24 @@ namespace
 		}
 		if (*begin == '\'')
 		{
-			InputIterator endIndex = std::find_if(begin + 1, end, [](char c)
-			                                      {
-				                                      static bool escaped =
-				                                          false;
-				                                      if (c == '\\')
-				                                      {
-					                                      escaped = true;
-				                                      }
-				                                      if (!escaped)
-				                                      {
-					                                      return c == '\'';
-				                                      }
-				                                      else
-				                                      {
-					                                      escaped = false;
-				                                      }
-				                                      return true;
-				                                  });
+			bool escaped = false;
+			InputIterator endIndex =
+			    std::find_if(begin + 1, end, [&escaped](char c)
+			                 {
+				                 if (c == '\\')
+				                 {
+					                 escaped = true;
+				                 }
+				                 if (!escaped)
+				                 {
+					                 return c == '\'';
+				                 }
+				                 else
+				                 {
+					                 escaped = false;
+				                 }
+				                 return true;
+				             });
 			if (endIndex == end)
 			{
 				throw std::invalid_argument(
