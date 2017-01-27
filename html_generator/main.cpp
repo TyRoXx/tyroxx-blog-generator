@@ -219,22 +219,6 @@ namespace
 		               pre(cl("code"), codeTag) + br());
 	}
 
-	/*auto generate_content(std::string const fileName)
-	{
-	    using namespace Si::html;
-	    if (fileName == "contacts.html")
-	    {
-	        return div(link("https://", "github.com/TyRoXx") +
-	                   link("https://", "twitter.com/tyroxxxx") +
-	                   link("mailto:", "tyroxxxx@gmail.com"));
-	    }
-	    else
-	    {
-	        return div(
-	            tag("a", attribute("href", "contact.html"), text("Contacts")));
-	    }
-	}*/
-
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
 	                       char const *name)
 	{
@@ -312,8 +296,6 @@ namespace
 		using namespace Si::html;
 		std::string siteTitle = "TyRoXx' blog";
 
-		// auto menuBox = generate_content(fileName);
-
 		auto articles =
 		    h2("Articles") + p("Sorry, there are no finished articles yet.");
 
@@ -361,10 +343,7 @@ namespace
 
 		auto headContent =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
-		         title(siteTitle) +
-		         // tag("link", attribute("rel", "stylesheet") +
-		         // attribute("href", "style.css"), empty)
-		         tag("style", text(style)));
+		         title(siteTitle) + tag("style", text(style)));
 		auto bodyContent = body(h1(siteTitle) + std::move(articles) +
 		                        std::move(drafts) + std::move(todo));
 		auto const document =
