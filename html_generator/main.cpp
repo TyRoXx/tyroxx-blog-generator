@@ -22,9 +22,8 @@ namespace
 	          char const(&address_without_protocol)[N])
 	{
 		using namespace Si::html;
-		return p(tag("a",
-		             attribute("href", protocol + address_without_protocol),
-		             text(address_without_protocol)));
+		return tag("a", attribute("href", protocol + address_without_protocol),
+		           text(address_without_protocol));
 	}
 
 	enum class token_type
@@ -57,11 +56,12 @@ namespace
 				                                    })),
 			        token_type::identifier};
 		}
-		if (*begin == '"')
+		if (*begin == '"' || *begin == '\'')
 		{
+			char first = *begin;
 			bool escaped = false;
 			InputIterator endIndex =
-			    std::find_if(begin + 1, end, [&escaped](char c)
+			    std::find_if(begin + 1, end, [&escaped, first](char c)
 			                 {
 				                 if (c == '\\')
 				                 {
@@ -69,7 +69,7 @@ namespace
 				                 }
 				                 if (!escaped)
 				                 {
-					                 return c == '"';
+					                 return c == first;
 				                 }
 				                 else
 				                 {
@@ -80,33 +80,6 @@ namespace
 			if (endIndex == end)
 			{
 				throw std::invalid_argument("Number of quotes must be even");
-			}
-			return {std::string(begin, endIndex + 1), token_type::string};
-		}
-		if (*begin == '\'')
-		{
-			bool escaped = false;
-			InputIterator endIndex =
-			    std::find_if(begin + 1, end, [&escaped](char c)
-			                 {
-				                 if (c == '\\')
-				                 {
-					                 escaped = true;
-				                 }
-				                 if (!escaped)
-				                 {
-					                 return c == '\'';
-				                 }
-				                 else
-				                 {
-					                 escaped = false;
-				                 }
-				                 return true;
-				             });
-			if (endIndex == end)
-			{
-				throw std::invalid_argument(
-				    "Number of single quotes must be even");
 			}
 			return {std::string(begin, endIndex + 1), token_type::string};
 		}
@@ -294,7 +267,7 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		std::string siteTitle = "TyRoXx' blog";
+		std::string siteTitle = "TyRoXx' blog (" + fileName + ")";
 
 		auto articles =
 		    h2("Articles") + p("Sorry, there are no finished articles yet.");
@@ -305,6 +278,28 @@ namespace
 #include "pages/throwing-constructor.hpp"
 		    ;
 
+		auto menu = dynamic(
+		    [&fileName](code_sink &sink)
+		    {
+			    if (fileName == "contact.html")
+			    {
+				    tag("menu",
+				        ul(li(link("https://", "github.com/TyRoXx")) +
+				           li(link("https://", "twitter.com/tyroxxxx")) +
+				           li(link("mailto:", "tyroxxxx@gmail.com")) +
+				           li(tag("a", attribute("href", "index.html"),
+				                  text("Back")))))
+				        .generate(sink);
+			    }
+			    else
+			    {
+				    tag("menu",
+				        ul(li(tag("a", attribute("href", "contact.html"),
+				                  text("Contacts")))))
+				        .generate(sink);
+			    }
+			});
+
 		auto todo =
 		    h2("Technical to do list") +
 		    ul(li("compile the code snippets") + li("color the code snippets") +
@@ -314,6 +309,27 @@ namespace
 		             "  width: 90%;\n"
 		             "  margin: auto;\n"
 		             "}\n"
+		             "a{ color: white; }"
+		             "a:visted{ color: white; }"
+		             "menu{\n"
+		             "  left: 0; top: 0;"
+		             "  padding: 0;"
+		             "  width: 100%;"
+		             "  background-color: black;"
+		             "}\n"
+		             "menu ul{\n"
+		             "  padding: 0; margin: 0;"
+		             "  padding: 20px 0;"
+		             "  list-style: none;"
+		             "}\n"
+		             "menu li{\n"
+		             "  display: inline-block;"
+		             "  width: 25%;"
+		             "  text-align: center;"
+		             "}\n"
+		             "menu li p{"
+		             "  line-height: 1;"
+		             "}"
 		             "p {\n"
 		             "	line-height: 1.6;\n"
 		             "}\n"
@@ -342,8 +358,9 @@ namespace
 		auto headContent =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
 		         title(siteTitle) + tag("style", text(style)));
-		auto bodyContent = body(h1(siteTitle) + std::move(articles) +
-		                        std::move(drafts) + std::move(todo));
+		auto bodyContent =
+		    body(std::move(menu) + h1(siteTitle) + std::move(articles) +
+		         std::move(drafts) + std::move(todo));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(headContent) + std::move(bodyContent));
