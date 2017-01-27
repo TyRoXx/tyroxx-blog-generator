@@ -1,5 +1,5 @@
 [requires]
-ventura/0.5@TyRoXx/master
+ventura/0.7@TyRoXx/stable
 
 [generators]
 cmake

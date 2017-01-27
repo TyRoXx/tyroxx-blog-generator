@@ -36,6 +36,7 @@ if(MSVC)
 endif()
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	set(CONAN_SYSTEM_INCLUDES ON)
 	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 	conan_basic_setup()
 else()
