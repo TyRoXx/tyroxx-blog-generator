@@ -1,9 +1,10 @@
 # Installation
 * Get conan with "pip install conan"
 * install the package: cmake, build-essential
-* run 'conan install [source] --build silicium --build ventura'
-* run 'cmake -G "CodeBlocks - Unix Makefiles" [source]'
-* requires gcc version >= 4.9
+* run 'conan install [source] --build=missing' in the build directory
+* for QtCreator, run 'cmake -G "CodeBlocks - Unix Makefiles" [source]' in the build directory
+* for Visual Studio, use the CMake GUI to generate your solution as usual and choose the right build directory
+* requires GCC version >= 4.9 or Visual Studio 2015
 
 #Changelog
 See a list of the most important changes that were made
