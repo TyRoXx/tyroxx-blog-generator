@@ -292,7 +292,7 @@ namespace
 
 		auto todo =
 		    h2("Technical to do list") +
-		    ul(li("compile the code snippets") + li("color the code snippets") +
+            ul(li("compile the code snippets") + li("[done] color the code snippets") +
 		       li("clang-format the code snippets"));
 
 		auto footerContent =
