@@ -18,4 +18,5 @@ build_script:
 
 test_script:
   - cmd: cd bin
+  - cmd: tests.exe
   - cmd: system_test.exe

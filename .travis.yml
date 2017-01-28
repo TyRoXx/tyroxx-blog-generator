@@ -40,6 +40,7 @@ script:
  - CXX=$CPP CC=$GCC cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE || exit 1
  - cmake --build . -- -j2 || exit 1
  - pushd bin
+ - ./tests || exit 1
  - ./html_generator "$(pwd)/test" || exit 1
  - if [ "$CPP" == "g++-4.9" ] && [ "$BUILD_TYPE" == "Release" ]; then
      message=$(git log --oneline -1);
