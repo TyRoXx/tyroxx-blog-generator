@@ -10,11 +10,19 @@
 
 namespace
 {
+
+	bool is_brace(char c)
+	{
+		static std::string const braces = "(){}<>[]";
+		return std::find(braces.begin(), braces.end(), c) != braces.end();
+	}
+
 	enum class token_type
 	{
 		identifier,
 		string,
 		double_colon,
+		brace,
 		space,
 		eof,
 		other
@@ -64,11 +72,16 @@ namespace
 				                                    })),
 			        token_type::space};
 		}
+		if (is_brace(*begin))
+		{
+			return {std::string(begin, begin + 1), token_type::brace};
+		}
+
 		if (*begin == '"' || *begin == '\'')
 		{
 			char first = *begin;
 			bool escaped = false;
-			InputIterator endIndex =
+			InputIterator end_index =
 			    std::find_if(begin + 1, end, [&escaped, first](char c)
 			                 {
 				                 if (c == '\\')
@@ -85,18 +98,18 @@ namespace
 				                 }
 				                 return true;
 				             });
-			if (endIndex == end)
+			if (end_index == end)
 			{
 				throw std::invalid_argument("Number of quotes must be even");
 			}
-			return {std::string(begin, endIndex + 1), token_type::string};
+			return {std::string(begin, end_index + 1), token_type::string};
 		}
 		return {std::string(begin, std::find_if(begin + 1, end,
 		                                        [](char c)
 		                                        {
 			                                        return isalnum(c) ||
 			                                               c == '"' ||
-                                                            c == ':' ||
+			                                               c == ':' ||
 			                                               c == '\'';
 			                                    })),
 		        token_type::other};
@@ -114,7 +127,7 @@ namespace
 			line_numbers += boost::lexical_cast<std::string>(i);
 			line_numbers += '\n';
 		}
-		auto codeTag = tag(
+		auto code_tag = tag(
 		    "code",
 		    dynamic([code](code_sink &sink)
 		            {
@@ -166,7 +179,7 @@ namespace
 			            for (;;)
 			            {
 				            token t = find_next_token(i, code.end());
-			            tokenSwitch:
+			            token_switch:
 				            switch (t.type)
 				            {
 				            case token_type::eof:
@@ -202,7 +215,7 @@ namespace
 							            text(t.content).generate(sink);
 						            }
 						            t = next;
-						            goto tokenSwitch;
+						            goto token_switch;
 					            }
 					            break;
 
@@ -216,10 +229,11 @@ namespace
 						            i += t.content.size();
 						            t = find_next_token(i, code.end());
 					            }
-					            goto tokenSwitch;
+					            goto token_switch;
 
 				            case token_type::space:
 				            case token_type::other:
+				            case token_type::brace:
 					            text(t.content).generate(sink);
 				            }
 				            i += t.content.size();
@@ -228,7 +242,7 @@ namespace
 
 		return div(cl("sourcecodeSnippet"),
 		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
-		               pre(cl("code"), codeTag) + br());
+		               pre(cl("code"), code_tag) + br());
 	}
 
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
@@ -292,10 +306,10 @@ namespace
 	boost::system::error_code
 	generate_all_html(ventura::absolute_path const &snippets_source_code,
 	                  ventura::absolute_path const &existing_output_root,
-	                  std::string const fileName)
+	                  std::string const file_name)
 	{
 		ventura::absolute_path const index_path =
-		    existing_output_root / ventura::relative_path(fileName);
+		    existing_output_root / ventura::relative_path(file_name);
 		Si::error_or<Si::file_handle> const index = ventura::overwrite_file(
 		    ventura::safe_c_str(to_os_string(index_path)));
 		if (index.is_error())
@@ -306,14 +320,14 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		std::string siteTitle;
-		if (fileName == "index.html")
+		std::string site_title;
+		if (file_name == "index.html")
 		{
-			siteTitle = "TyRoXx' blog";
+			site_title = "TyRoXx' blog";
 		}
 		else
 		{
-			siteTitle = "TyRoXx' contacts";
+			site_title = "TyRoXx' contacts";
 		}
 		auto articles = h2(text("Articles")) +
 		                p("Sorry, there are no finished articles yet.");
@@ -324,7 +338,7 @@ namespace
 #include "pages/throwing-constructor.hpp"
 		    ;
 
-		auto menuContent =
+		auto menu_content =
 		    menu(ul(li(link("", "index.html", "Home")) +
 		            li(link("", "articles.html", "Articles (todo)")) +
 		            li(link("", "contact.html", "Contact"))));
@@ -334,23 +348,24 @@ namespace
 		               li(text("[done] color the code snippets")) +
 		               li(text("clang-format the code snippets")));
 
-		auto footerContent =
+		auto footer_content =
 		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
 		              li(link("https://", "twitter.com/tyroxxxx")) +
 		              li(link("mailto:", "tyroxxxx@gmail.com"))));
 
-		auto headContent =
+		auto head_content =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
-		         title(siteTitle) +
+		         title(site_title) +
 		         tag("link",
 		             href("stylesheets.css") + attribute("rel", "stylesheet"),
 		             empty));
-		auto bodyContent = body(std::move(menuContent) + h1(text(siteTitle)) +
-		                        std::move(articles) + std::move(drafts) +
-		                        std::move(todo) + std::move(footerContent));
+		auto body_content =
+		    body(std::move(menu_content) + h1(text(site_title)) +
+		         std::move(articles) + std::move(drafts) + std::move(todo) +
+		         std::move(footer_content));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
-		    html(std::move(headContent) + std::move(bodyContent));
+		    html(std::move(head_content) + std::move(body_content));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(
 		    Si::make_throwing_sink(index_sink));
 		try
