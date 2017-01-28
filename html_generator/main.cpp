@@ -276,10 +276,10 @@ namespace
 		{
 			siteTitle = "TyRoXx' contacts";
 		}
-		auto articles =
-		    h2("Articles") + p("Sorry, there are no finished articles yet.");
+		auto articles = h2(text("Articles")) +
+		                p("Sorry, there are no finished articles yet.");
 
-		auto drafts = h2("Drafts") +
+		auto drafts = h2(text("Drafts")) +
 #include "pages/input-validation.hpp"
 		              +
 #include "pages/throwing-constructor.hpp"
@@ -290,10 +290,10 @@ namespace
 		            li(link("", "articles.html", "Articles (todo)")) +
 		            li(link("", "contact.html", "Contact"))));
 
-		auto todo =
-		    h2("Technical to do list") +
-            ul(li("compile the code snippets") + li("[done] color the code snippets") +
-		       li("clang-format the code snippets"));
+		auto todo = h2(text("Technical to do list")) +
+		            ul(li(text("compile the code snippets")) +
+		               li(text("[done] color the code snippets")) +
+		               li(text("clang-format the code snippets")));
 
 		auto footerContent =
 		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
@@ -306,7 +306,7 @@ namespace
 		         tag("link",
 		             href("stylesheets.css") + attribute("rel", "stylesheet"),
 		             empty));
-		auto bodyContent = body(std::move(menuContent) + h1(siteTitle) +
+		auto bodyContent = body(std::move(menuContent) + h1(text(siteTitle)) +
 		                        std::move(articles) + std::move(drafts) +
 		                        std::move(todo) + std::move(footerContent));
 		auto const document =
