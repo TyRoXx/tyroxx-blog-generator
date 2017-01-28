@@ -14,6 +14,7 @@ namespace
 	{
 		identifier,
 		string,
+		names,
 		eof,
 		other
 	};
@@ -33,12 +34,22 @@ namespace
 		}
 		if (isalnum(*begin))
 		{
-			return {std::string(begin, std::find_if(begin + 1, end,
-			                                        [](char c)
-			                                        {
-				                                        return !isalnum(c);
-				                                    })),
-			        token_type::identifier};
+			std::string content =
+			    std::string(begin, std::find_if(begin + 1, end, [](char c)
+			                                    {
+				                                    return !isalnum(c) &&
+				                                           c != '_' && c != ':';
+				                                }));
+			auto colonCount = std::count(content.begin(), content.end(), ':');
+			if (colonCount == 0)
+			{
+				return {content, token_type::identifier};
+			}
+			if (colonCount % 2 == 0)
+			{
+				return {content, token_type::names};
+			}
+			return {content, token_type::other};
 		}
 		if (*begin == '"' || *begin == '\'')
 		{
@@ -166,6 +177,11 @@ namespace
 					            {
 						            text(t.content).generate(sink);
 					            }
+					            break;
+				            case token_type::names:
+					            span(attribute("class", "names"),
+					                 text(t.content))
+					                .generate(sink);
 				            }
 				            i += t.content.size();
 			            }
@@ -358,12 +374,12 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-    if(output_option.empty()){
-        std::cerr
-            << "Please provide an absolute path to generate to.\n";
-        std::cerr << desc << "\n";
-        return 1;
-    }
+	if (output_option.empty())
+	{
+		std::cerr << "Please provide an absolute path to generate to.\n";
+		std::cerr << desc << "\n";
+		return 1;
+	}
 
 	Si::optional<ventura::absolute_path> const output_root =
 	    ventura::absolute_path::create(output_option);
