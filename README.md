@@ -14,6 +14,6 @@ See a list of the most important changes that were made
 * code snippets have code highlighting now
 
 # Todo
-* Add an external file for CSS file
+* Add an external file for CSS file (done)
 * See todos on the page itself (code formatting and execution)
 * More pages!!!
