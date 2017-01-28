@@ -358,6 +358,13 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+    if(output_option.empty()){
+        std::cerr
+            << "Please provide an absolute path to generate to.\n";
+        std::cerr << desc << "\n";
+        return 1;
+    }
+
 	Si::optional<ventura::absolute_path> const output_root =
 	    ventura::absolute_path::create(output_option);
 	if (!output_root)
