@@ -236,7 +236,7 @@ namespace
 	{
 		using namespace Si::html;
 		return dynamic(
-		    [protocol, address_without_protocol, caption](code_sink &sink)
+		    [protocol, &address_without_protocol, caption](code_sink &sink)
 		    {
 			    if (protocol == "http://" || protocol == "https://")
 			    {
