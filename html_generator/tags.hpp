@@ -273,18 +273,35 @@ namespace
 	// PSEUDO TAG: link (emulates a tag)
 	template <std::size_t N>
 	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N])
+	          char const(&address_without_protocol)[N], std::string caption)
 	{
 		using namespace Si::html;
-        return dynamic([protocol, address_without_protocol](code_sink &sink){
-            if(protocol == "http://" || protocol == "https://"){
-                tag("a", href(protocol + address_without_protocol) + attribute("target", "_blank"),
-                           text(address_without_protocol)).generate(sink);
-            }else{
-            tag("a", href(protocol + address_without_protocol),
-                       text(address_without_protocol)).generate(sink);
-            }
-        });
+		return dynamic(
+		    [protocol, address_without_protocol, caption](code_sink &sink)
+		    {
+			    if (protocol == "http://" || protocol == "https://")
+			    {
+				    tag("a", href(protocol + address_without_protocol) +
+				                 attribute("target", "_blank"),
+				        text(caption))
+				        .generate(sink);
+			    }
+			    else
+			    {
+				    tag("a", href(protocol + address_without_protocol),
+				        text(caption))
+				        .generate(sink);
+			    }
+			});
+	}
+
+	// PSEUDO TAG: link (emulates a tag)
+	template <std::size_t N>
+	auto link(std::string const &protocol,
+	          char const(&address_without_protocol)[N])
+	{
+		return link(protocol, address_without_protocol,
+		            address_without_protocol);
 	}
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)

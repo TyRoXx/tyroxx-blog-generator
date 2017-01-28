@@ -294,8 +294,7 @@ namespace
 				        ul(li(link("https://", "github.com/TyRoXx")) +
 				           li(link("https://", "twitter.com/tyroxxxx")) +
 				           li(link("mailto:", "tyroxxxx@gmail.com")) +
-				           li(tag("a", attribute("href", "index.html"),
-				                  text("Back")))))
+				           li(link("", "index.html", "Back"))))
 				        .generate(sink);
 			    }
 			    else
