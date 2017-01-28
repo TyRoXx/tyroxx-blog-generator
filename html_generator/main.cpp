@@ -14,7 +14,8 @@ namespace
 	{
 		identifier,
 		string,
-		names,
+		double_colon,
+		space,
 		eof,
 		other
 	};
@@ -34,22 +35,34 @@ namespace
 		}
 		if (isalnum(*begin))
 		{
-			std::string content =
-			    std::string(begin, std::find_if(begin + 1, end, [](char c)
-			                                    {
-				                                    return !isalnum(c) &&
-				                                           c != '_' && c != ':';
-				                                }));
-			auto colonCount = std::count(content.begin(), content.end(), ':');
-			if (colonCount == 0)
+			return {std::string(begin, std::find_if(begin + 1, end,
+			                                        [](char c)
+			                                        {
+				                                        return !isalnum(c) &&
+				                                               c != '_';
+				                                    })),
+			        token_type::identifier};
+		}
+		if (*begin == ':')
+		{
+			if (begin + 1 == end)
 			{
-				return {content, token_type::identifier};
+				return {":", token_type::other};
 			}
-			if (colonCount % 2 == 0)
+			if (begin[1] != ':')
 			{
-				return {content, token_type::names};
+				return {std::string(begin, begin + 2), token_type::other};
 			}
-			return {content, token_type::other};
+			return {"::", token_type::double_colon};
+		}
+		if (!isprint(*begin))
+		{
+			return {std::string(begin, std::find_if(begin + 1, end,
+			                                        [](char c)
+			                                        {
+				                                        return isprint(c);
+				                                    })),
+			        token_type::space};
 		}
 		if (*begin == '"' || *begin == '\'')
 		{
@@ -83,6 +96,7 @@ namespace
 		                                        {
 			                                        return isalnum(c) ||
 			                                               c == '"' ||
+                                                            c == ':' ||
 			                                               c == '\'';
 			                                    })),
 		        token_type::other};
@@ -152,18 +166,18 @@ namespace
 			            for (;;)
 			            {
 				            token t = find_next_token(i, code.end());
+			            tokenSwitch:
 				            switch (t.type)
 				            {
 				            case token_type::eof:
 					            return;
-				            case token_type::other:
-					            text(t.content).generate(sink);
-					            break;
+
 				            case token_type::string:
 					            span(attribute("class", "stringLiteral"),
 					                 text(t.content))
 					                .generate(sink);
 					            break;
+
 				            case token_type::identifier:
 					            if (std::find(std::begin(keywords),
 					                          std::end(keywords),
@@ -175,13 +189,38 @@ namespace
 					            }
 					            else
 					            {
-						            text(t.content).generate(sink);
+						            i += t.content.size();
+						            token next = find_next_token(i, code.end());
+						            if (next.type == token_type::double_colon)
+						            {
+							            span(attribute("class", "names"),
+							                 text(t.content))
+							                .generate(sink);
+						            }
+						            else
+						            {
+							            text(t.content).generate(sink);
+						            }
+						            t = next;
+						            goto tokenSwitch;
 					            }
 					            break;
-				            case token_type::names:
-					            span(attribute("class", "names"),
-					                 text(t.content))
-					                .generate(sink);
+
+				            case token_type::double_colon:
+					            while (t.type == token_type::identifier ||
+					                   t.type == token_type::double_colon)
+					            {
+						            span(attribute("class", "names"),
+						                 text(t.content))
+						                .generate(sink);
+						            i += t.content.size();
+						            t = find_next_token(i, code.end());
+					            }
+					            goto tokenSwitch;
+
+				            case token_type::space:
+				            case token_type::other:
+					            text(t.content).generate(sink);
 				            }
 				            i += t.content.size();
 			            }
