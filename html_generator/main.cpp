@@ -285,31 +285,20 @@ namespace
 #include "pages/throwing-constructor.hpp"
 		    ;
 
-		auto menu = dynamic(
-		    [&fileName](code_sink &sink)
-		    {
-			    if (fileName == "contact.html")
-			    {
-				    tag("menu",
-				        ul(li(link("https://", "github.com/TyRoXx")) +
-				           li(link("https://", "twitter.com/tyroxxxx")) +
-				           li(link("mailto:", "tyroxxxx@gmail.com")) +
-				           li(link("", "index.html", "Back"))))
-				        .generate(sink);
-			    }
-			    else
-			    {
-				    tag("menu",
-				        ul(li(tag("a", attribute("href", "contact.html"),
-				                  text("Contacts")))))
-				        .generate(sink);
-			    }
-			});
+		auto menuContent =
+		    menu(ul(li(link("", "index.html", "Home")) +
+		            li(link("", "articles.html", "Articles (todo)")) +
+		            li(link("", "contact.html", "Contact"))));
 
 		auto todo =
 		    h2("Technical to do list") +
 		    ul(li("compile the code snippets") + li("color the code snippets") +
 		       li("clang-format the code snippets"));
+
+		auto footerContent =
+		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
+		              li(link("https://", "twitter.com/tyroxxxx")) +
+		              li(link("mailto:", "tyroxxxx@gmail.com"))));
 
 		auto headContent =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
@@ -317,9 +306,9 @@ namespace
 		         tag("link",
 		             href("stylesheets.css") + attribute("rel", "stylesheet"),
 		             empty));
-		auto bodyContent =
-		    body(std::move(menu) + h1(siteTitle) + std::move(articles) +
-		         std::move(drafts) + std::move(todo));
+		auto bodyContent = body(std::move(menuContent) + h1(siteTitle) +
+		                        std::move(articles) + std::move(drafts) +
+		                        std::move(todo) + std::move(footerContent));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(headContent) + std::move(bodyContent));

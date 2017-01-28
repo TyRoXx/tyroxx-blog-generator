@@ -86,6 +86,20 @@ namespace
 		return h4(Si::html::text(content));
 	}
 
+	//----------------MENU tag----------------
+	template <class Element>
+	auto menu(Element &&content)
+	{
+		return Si::html::tag("menu", std::forward<Element>(content));
+	}
+
+	//----------------FOOTER tag----------------
+	template <class Element>
+	auto footer(Element &&content)
+	{
+		return Si::html::tag("footer", std::forward<Element>(content));
+	}
+
 	//----------------P tag----------------
 	template <class Element>
 	auto p(Element &&content)
