@@ -10,22 +10,6 @@
 
 namespace
 {
-	template <std::size_t N>
-	auto anchor_attributes(char const(&name)[N])
-	{
-		return Si::html::attribute("name", name) +
-		       Si::html::attribute("href", std::string("#") + name);
-	}
-
-	template <std::size_t N>
-	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N])
-	{
-		using namespace Si::html;
-		return tag("a", attribute("href", protocol + address_without_protocol),
-		           text(address_without_protocol));
-	}
-
 	enum class token_type
 	{
 		identifier,

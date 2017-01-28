@@ -261,4 +261,29 @@ namespace
 	{
 		return Si::html::attribute("id", content);
 	}
+
+	//----------------href attrib----------------
+	template <class StringLike>
+	auto href(StringLike const &content)
+	{
+		return Si::html::attribute("href", content);
+	}
+
+	// PSEUDO TAG: link (emulates a tag)
+	template <std::size_t N>
+	auto link(std::string const &protocol,
+	          char const(&address_without_protocol)[N])
+	{
+		using namespace Si::html;
+		return tag("a", href(protocol + address_without_protocol),
+		           text(address_without_protocol));
+	}
+
+	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)
+	template <std::size_t N>
+	auto anchor_attributes(char const(&name)[N])
+	{
+		using namespace Si::html;
+		return attribute("name", name) + href(std::string("#") + name);
+	}
 }
