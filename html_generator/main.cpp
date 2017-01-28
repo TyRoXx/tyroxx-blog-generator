@@ -311,13 +311,13 @@ namespace
 		    h2("Technical to do list") +
 		    ul(li("compile the code snippets") + li("color the code snippets") +
 		       li("clang-format the code snippets"));
-		auto style =
-#include "pages/stylesheet.hpp"
-		    ;
 
 		auto headContent =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
-		         title(siteTitle) + tag("style", text(style)));
+		         title(siteTitle) +
+		         tag("link",
+		             href("stylesheets.css") + attribute("rel", "stylesheet"),
+		             empty));
 		auto bodyContent =
 		    body(std::move(menu) + h1(siteTitle) + std::move(articles) +
 		         std::move(drafts) + std::move(todo));
@@ -402,16 +402,18 @@ int main(int argc, char **argv)
 	}
 
 	{
+		ventura::absolute_path repo = *ventura::parent(
+		    *ventura::parent(*ventura::absolute_path::create(__FILE__)));
 		boost::system::error_code const ec =
-		    generate_all_html(*ventura::parent(*ventura::parent(
-		                          *ventura::absolute_path::create(__FILE__))) /
-		                          ventura::relative_path("snippets"),
+		    generate_all_html(repo / ventura::relative_path("snippets"),
 		                      *output_root, "index.html");
 		boost::system::error_code const ec2 =
-		    generate_all_html(*ventura::parent(*ventura::parent(
-		                          *ventura::absolute_path::create(__FILE__))) /
-		                          ventura::relative_path("snippets"),
+		    generate_all_html(repo / ventura::relative_path("snippets"),
 		                      *output_root, "contact.html");
+		ventura::copy(repo / ventura::relative_path(
+		                         "html_generator/pages/stylesheet.css"),
+		              *output_root / ventura::relative_path("stylesheets.css"),
+		              Si::return_);
 
 		if (!!ec && !!ec2)
 		{
