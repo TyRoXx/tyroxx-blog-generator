@@ -276,8 +276,15 @@ namespace
 	          char const(&address_without_protocol)[N])
 	{
 		using namespace Si::html;
-		return tag("a", href(protocol + address_without_protocol),
-		           text(address_without_protocol));
+        return dynamic([protocol, address_without_protocol](code_sink &sink){
+            if(protocol == "http://" || protocol == "https://"){
+                tag("a", href(protocol + address_without_protocol) + attribute("target", "_blank"),
+                           text(address_without_protocol)).generate(sink);
+            }else{
+            tag("a", href(protocol + address_without_protocol),
+                       text(address_without_protocol)).generate(sink);
+            }
+        });
 	}
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)
