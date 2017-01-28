@@ -24,79 +24,63 @@ namespace
 	}
 
 	//----------------TITLE tag----------------
-	template <class Element>
-	auto title(Element &&content)
+	auto title(std::string const &content)
 	{
-		return Si::html::tag("title", std::forward<Element>(content));
-	}
-	template <class StringLike>
-	auto title(StringLike &content)
-	{
-		return title(Si::html::text(content));
+		using namespace Si::html;
+		return tag("title", text(content));
 	}
 
 	//----------------H1 tag----------------
 	template <class Element>
 	auto h1(Element &&content)
 	{
-		return Si::html::tag("h1", std::forward<Element>(content));
-	}
-	template <class StringLike>
-	auto h1(StringLike &content)
-	{
-		return h1(Si::html::text(content));
+		using namespace Si::html;
+		return tag("h1", std::forward<Element>(content));
 	}
 
 	//----------------H2 tag----------------
 	template <class Element>
 	auto h2(Element &&content)
 	{
-		return Si::html::tag("h2", std::forward<Element>(content));
-	}
-
-	template <class StringLike>
-	auto h2(StringLike &content)
-	{
-		return h2(Si::html::text(content));
+		using namespace Si::html;
+		return tag("h2", std::forward<Element>(content));
 	}
 
 	//----------------H3 tag----------------
 	template <class Element>
 	auto h3(Element &&content)
 	{
-		return Si::html::tag("h3", std::forward<Element>(content));
-	}
-
-	template <class StringLike>
-	auto h3(StringLike &content)
-	{
-		return h3(Si::html::text(content));
+		using namespace Si::html;
+		return tag("h3", std::forward<Element>(content));
 	}
 
 	//----------------H4 tag----------------
 	template <class Element>
 	auto h4(Element &&content)
 	{
-		return Si::html::tag("h4", std::forward<Element>(content));
+		using namespace Si::html;
+		return tag("h4", std::forward<Element>(content));
 	}
 
-	template <class StringLike>
-	auto h4(StringLike &content)
+	//----------------MENU tag----------------
+	template <class Element>
+	auto menu(Element &&content)
 	{
-		return h4(Si::html::text(content));
+		return Si::html::tag("menu", std::forward<Element>(content));
+	}
+
+	//----------------FOOTER tag----------------
+	template <class Element>
+	auto footer(Element &&content)
+	{
+		return Si::html::tag("footer", std::forward<Element>(content));
 	}
 
 	//----------------P tag----------------
-	template <class Element>
-	auto p(Element &&content)
+	auto p(std::string const &content)
 	{
-		return Si::html::tag("p", std::forward<Element>(content));
-	}
-
-	template <class StringLike>
-	auto p(StringLike const &content)
-	{
-		return p(Si::html::text(content));
+		using namespace Si::html;
+		return tag("p", text(content));
 	}
 
 	template <class Element, class Attributes>
@@ -111,12 +95,6 @@ namespace
 	auto div(Element &&content)
 	{
 		return Si::html::tag("div", std::forward<Element>(content));
-	}
-
-	template <class StringLike>
-	auto div(StringLike const &content)
-	{
-		return div(p(Si::html::text(content)));
 	}
 
 	template <class Element, class Attributes>
@@ -147,8 +125,8 @@ namespace
 		return Si::html::tag("table", std::forward<Element>(content));
 	}
 
-	template <class StringLike, class Element>
-	auto table(StringLike summary, Element &&content)
+	template <class Element>
+	auto table(std::string const &summary, Element &&content)
 	{
 		return Si::html::tag("table", Si::html::attribute("summary", summary),
 		                     std::forward<Element>(content));
@@ -176,22 +154,12 @@ namespace
 	{
 		return Si::html::tag("td", std::forward<Element>(content));
 	}
-	template <class StringLike>
-	auto td(StringLike const &content)
-	{
-		return td(Si::html::text(content));
-	}
 
 	//----------------TH tag----------------
-	template <class Element>
-	auto th(Element &&content)
+	auto th(std::string const &content)
 	{
-		return Si::html::tag("th", std::forward<Element>(content));
-	}
-	template <class StringLike>
-	auto th(StringLike const &content)
-	{
-		return th(Si::html::text(content));
+		using namespace Si::html;
+		return tag("th", Si::html::text(content));
 	}
 
 	//----------------UL tag----------------
@@ -212,12 +180,6 @@ namespace
 	auto li(Element &&content)
 	{
 		return Si::html::tag("li", std::forward<Element>(content));
-	}
-
-	template <class StringLike>
-	auto li(StringLike const &content)
-	{
-		return li(Si::html::text(content));
 	}
 
 	//----------------PRE tag----------------
@@ -242,42 +204,62 @@ namespace
 	}
 
 	//----------------IMG tag----------------
-	template <class StringLike>
-	auto img(StringLike const &content)
+	auto img(std::string const &content)
 	{
 		using namespace Si::html;
 		return tag("img", attribute("src", content), empty);
 	}
 
 	//----------------classes attrib----------------
-	template <class StringLike>
-	auto cl(StringLike const &content)
+	auto cl(std::string const &content)
 	{
 		return Si::html::attribute("class", content);
 	}
 
 	//----------------id attrib----------------
-	template <class StringLike>
-	auto id(StringLike const &content)
+	auto id(std::string const &content)
 	{
 		return Si::html::attribute("id", content);
 	}
 
 	//----------------href attrib----------------
-	template <class StringLike>
-	auto href(StringLike const &content)
+	auto href(std::string const &content)
 	{
 		return Si::html::attribute("href", content);
 	}
 
-	// PSEUDO TAG: link (emulates a tag)
+	// PSEUDO TAG: link (emulates the a-tag)
+	template <std::size_t N>
+	auto link(std::string const &protocol,
+	          char const(&address_without_protocol)[N],
+	          std::string const &caption)
+	{
+		using namespace Si::html;
+		return dynamic(
+		    [protocol, address_without_protocol, caption](code_sink &sink)
+		    {
+			    if (protocol == "http://" || protocol == "https://")
+			    {
+				    tag("a", href(protocol + address_without_protocol) +
+				                 attribute("target", "_blank"),
+				        text(caption))
+				        .generate(sink);
+			    }
+			    else
+			    {
+				    tag("a", href(protocol + address_without_protocol),
+				        text(caption))
+				        .generate(sink);
+			    }
+			});
+	}
+
 	template <std::size_t N>
 	auto link(std::string const &protocol,
 	          char const(&address_without_protocol)[N])
 	{
-		using namespace Si::html;
-		return tag("a", href(protocol + address_without_protocol),
-		           text(address_without_protocol));
+		return link(protocol, address_without_protocol,
+		            address_without_protocol);
 	}
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)

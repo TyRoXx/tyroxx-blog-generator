@@ -1,0 +1,69 @@
+/* General Tag definitions */
+a {
+	color: black;
+}
+body {
+	font-size: 16px;
+	width: 90%;
+	margin: auto;
+	font-family: sans-serif;
+}
+li{
+	list-style: square;
+}
+
+/* Menu and footer defintions */
+menu a, footer a {
+	color: white;
+}
+menu a:visted {
+	color: white;
+}
+menu, footer{
+	padding: 0;
+	width: 100%;
+	background-color: black;
+}
+menu ul, footer ul {
+	padding: 0;
+	margin: 0;
+	padding: 20px 0;
+	list-style: none;
+}
+menu li, footer li {
+	display: inline-block;
+	width: 33.33%;
+	text-align: center;
+}
+footer {
+	margin-bottom: 1em;
+}
+
+/* Formating the source code and its snippets*/
+.sourcecodeSnippet {
+	font-family: Consolas serif;
+	background-color: silver;
+	overflow: auto none;
+	white-space: nowrap;
+	border: 1px solid black;
+}
+.sourcecodeSnippet .lineNumbers {
+	display: inline-block;
+	text-align: right;
+	padding: 0 .5em;
+	border-right: 1px solid black;
+}
+.sourcecodeSnippet .code {
+	display: inline-block;
+	margin-left: 1em;
+}
+code .keyword {
+	color: blue;
+	font-weight: bold;
+}
+code .names {
+	color: purple;
+}
+code .stringLiteral {
+	color: #46A346;
+}

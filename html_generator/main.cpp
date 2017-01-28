@@ -14,6 +14,7 @@ namespace
 	{
 		identifier,
 		string,
+		names,
 		eof,
 		other
 	};
@@ -33,12 +34,22 @@ namespace
 		}
 		if (isalnum(*begin))
 		{
-			return {std::string(begin, std::find_if(begin + 1, end,
-			                                        [](char c)
-			                                        {
-				                                        return !isalnum(c);
-				                                    })),
-			        token_type::identifier};
+			std::string content =
+			    std::string(begin, std::find_if(begin + 1, end, [](char c)
+			                                    {
+				                                    return !isalnum(c) &&
+				                                           c != '_' && c != ':';
+				                                }));
+			auto colonCount = std::count(content.begin(), content.end(), ':');
+			if (colonCount == 0)
+			{
+				return {content, token_type::identifier};
+			}
+			if (colonCount % 2 == 0)
+			{
+				return {content, token_type::names};
+			}
+			return {content, token_type::other};
 		}
 		if (*begin == '"' || *begin == '\'')
 		{
@@ -166,6 +177,11 @@ namespace
 					            {
 						            text(t.content).generate(sink);
 					            }
+					            break;
+				            case token_type::names:
+					            span(attribute("class", "names"),
+					                 text(t.content))
+					                .generate(sink);
 				            }
 				            i += t.content.size();
 			            }
@@ -260,51 +276,39 @@ namespace
 		{
 			siteTitle = "TyRoXx' contacts";
 		}
-		auto articles =
-		    h2("Articles") + p("Sorry, there are no finished articles yet.");
+		auto articles = h2(text("Articles")) +
+		                p("Sorry, there are no finished articles yet.");
 
-		auto drafts = h2("Drafts") +
+		auto drafts = h2(text("Drafts")) +
 #include "pages/input-validation.hpp"
 		              +
 #include "pages/throwing-constructor.hpp"
 		    ;
 
-		auto menu = dynamic(
-		    [&fileName](code_sink &sink)
-		    {
-			    if (fileName == "contact.html")
-			    {
-				    tag("menu",
-				        ul(li(link("https://", "github.com/TyRoXx")) +
-				           li(link("https://", "twitter.com/tyroxxxx")) +
-				           li(link("mailto:", "tyroxxxx@gmail.com")) +
-				           li(tag("a", attribute("href", "index.html"),
-				                  text("Back")))))
-				        .generate(sink);
-			    }
-			    else
-			    {
-				    tag("menu",
-				        ul(li(tag("a", attribute("href", "contact.html"),
-				                  text("Contacts")))))
-				        .generate(sink);
-			    }
-			});
+		auto menuContent =
+		    menu(ul(li(link("", "index.html", "Home")) +
+		            li(link("", "articles.html", "Articles (todo)")) +
+		            li(link("", "contact.html", "Contact"))));
 
-		auto todo =
-		    h2("Technical to do list") +
-		    ul(li("compile the code snippets") + li("color the code snippets") +
-		       li("clang-format the code snippets"));
-		auto style =
-#include "pages/stylesheet.hpp"
-		    ;
+		auto todo = h2(text("Technical to do list")) +
+		            ul(li(text("compile the code snippets")) +
+		               li(text("[done] color the code snippets")) +
+		               li(text("clang-format the code snippets")));
+
+		auto footerContent =
+		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
+		              li(link("https://", "twitter.com/tyroxxxx")) +
+		              li(link("mailto:", "tyroxxxx@gmail.com"))));
 
 		auto headContent =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
-		         title(siteTitle) + tag("style", text(style)));
-		auto bodyContent =
-		    body(std::move(menu) + h1(siteTitle) + std::move(articles) +
-		         std::move(drafts) + std::move(todo));
+		         title(siteTitle) +
+		         tag("link",
+		             href("stylesheets.css") + attribute("rel", "stylesheet"),
+		             empty));
+		auto bodyContent = body(std::move(menuContent) + h1(text(siteTitle)) +
+		                        std::move(articles) + std::move(drafts) +
+		                        std::move(todo) + std::move(footerContent));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(headContent) + std::move(bodyContent));
@@ -358,6 +362,13 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	if (output_option.empty())
+	{
+		std::cerr << "Please provide an absolute path to generate to.\n";
+		std::cerr << desc << "\n";
+		return 1;
+	}
+
 	Si::optional<ventura::absolute_path> const output_root =
 	    ventura::absolute_path::create(output_option);
 	if (!output_root)
@@ -379,16 +390,18 @@ int main(int argc, char **argv)
 	}
 
 	{
+		ventura::absolute_path repo = *ventura::parent(
+		    *ventura::parent(*ventura::absolute_path::create(__FILE__)));
 		boost::system::error_code const ec =
-		    generate_all_html(*ventura::parent(*ventura::parent(
-		                          *ventura::absolute_path::create(__FILE__))) /
-		                          ventura::relative_path("snippets"),
+		    generate_all_html(repo / ventura::relative_path("snippets"),
 		                      *output_root, "index.html");
 		boost::system::error_code const ec2 =
-		    generate_all_html(*ventura::parent(*ventura::parent(
-		                          *ventura::absolute_path::create(__FILE__))) /
-		                          ventura::relative_path("snippets"),
+		    generate_all_html(repo / ventura::relative_path("snippets"),
 		                      *output_root, "contact.html");
+		ventura::copy(repo / ventura::relative_path(
+		                         "html_generator/pages/stylesheet.css"),
+		              *output_root / ventura::relative_path("stylesheets.css"),
+		              Si::return_);
 
 		if (!!ec && !!ec2)
 		{
