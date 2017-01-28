@@ -251,8 +251,15 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
-		std::string siteTitle = "TyRoXx' blog (" + fileName + ")";
-
+		std::string siteTitle;
+		if (fileName == "index.html")
+		{
+			siteTitle = "TyRoXx' blog";
+		}
+		else
+		{
+			siteTitle = "TyRoXx' contacts";
+		}
 		auto articles =
 		    h2("Articles") + p("Sorry, there are no finished articles yet.");
 
