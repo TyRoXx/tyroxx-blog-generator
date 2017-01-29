@@ -6,16 +6,12 @@ br{
 	clear:both;
 }
 body {
-	font-size: 100%;
 	width: 90%;
 	margin: auto;
 	font-family: sans-serif;
 }
 li{
 	list-style: square;
-}
-code, pre{
-	font-size: 100%;
 }
 /* Menu and footer defintions */
 menu a, footer a {
@@ -46,6 +42,7 @@ footer {
 
 /* Formating the source code and its snippets*/
 .sourcecodeSnippet {
+	font-size: 120%;
 	font-family: monospace;
 	white-space: nowrap;
 }
@@ -82,5 +79,8 @@ code .stringLiteral {
 		display: block;
 		width: 100%;
 		margin: 1em auto;
+	}
+	menu ul, footer ul{
+		padding: .5em 0;
 	}
 }
