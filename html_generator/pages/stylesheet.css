@@ -46,10 +46,8 @@ footer {
 
 /* Formating the source code and its snippets*/
 .sourcecodeSnippet {
-	font-family: Consolas serif;
-	background-color: silver;
+	font-family: monospace;
 	white-space: nowrap;
-	border: 1px solid black;
 }
 .sourcecodeSnippet .lineNumbers {
 	float:left;
@@ -59,7 +57,7 @@ footer {
 }
 .sourcecodeSnippet .code {
 	float:left;
-	max-width: 100%;
+	width: 0;
 	margin-left: 1em;
 	overflow: auto none;
 }
