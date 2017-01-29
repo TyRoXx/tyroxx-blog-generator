@@ -331,9 +331,17 @@ namespace
 		{
 			site_title = "TyRoXx' blog";
 		}
-		else
+		else if (file_name == "contact.html")
 		{
 			site_title = "TyRoXx' contacts";
+		}
+		else if (file_name == "articles.html")
+		{
+			site_title = "List of articles";
+		}
+		else
+		{
+			site_title = "Unknown page";
 		}
 		auto articles = h2(text("Articles")) +
 		                p("Sorry, there are no finished articles yet.");
