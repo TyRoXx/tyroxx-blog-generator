@@ -482,4 +482,23 @@ int main(int argc, char **argv)
 			return 1;
 		}
 	}
+	{
+		// Directory listing for articles
+		boost::system::error_code ec;
+		ventura::absolute_path articles =
+		    repo / ventura::relative_path("html_generator/articles");
+		boost::filesystem::directory_iterator itter =
+		    boost::filesystem::directory_iterator(articles.to_boost_path(), ec);
+		if (!!ec)
+		{
+			std::cerr << ec << '\n';
+			return 1;
+		}
+		while (itter != end(itter))
+		{
+			const boost::filesystem::directory_entry file = *itter;
+			std::cout << file.path().filename().c_str();
+			itter.increment(ec);
+		}
+	}
 }
