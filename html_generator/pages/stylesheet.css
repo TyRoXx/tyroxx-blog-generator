@@ -13,6 +13,10 @@ body {
 li{
 	list-style: square;
 }
+
+code{
+	font-size: 150%;
+}
 /* Menu and footer defintions */
 menu a, footer a {
 	color: white;
@@ -42,17 +46,18 @@ footer {
 
 /* Formating the source code and its snippets*/
 .sourcecodeSnippet {
-	font-size: 120%;
 	font-family: monospace;
 	white-space: nowrap;
 }
 .sourcecodeSnippet .lineNumbers {
 	float:left;
+	font-size: 150%;
 	text-align: right;
 	padding: 0 .5em;
 	border-right: 1px solid black;
 }
 .sourcecodeSnippet .code {
+	margin-top: 1.5em;
 	float:left;
 	width: 0;
 	margin-left: 1em;
