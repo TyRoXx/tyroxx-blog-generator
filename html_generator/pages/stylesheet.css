@@ -2,8 +2,11 @@
 a {
 	color: black;
 }
+br{
+	clear:both;
+}
 body {
-	font-size: 16px;
+	font-size: 100%;
 	width: 90%;
 	margin: auto;
 	font-family: sans-serif;
@@ -11,7 +14,9 @@ body {
 li{
 	list-style: square;
 }
-
+code, pre{
+	font-size: 100%;
+}
 /* Menu and footer defintions */
 menu a, footer a {
 	color: white;
@@ -43,19 +48,20 @@ footer {
 .sourcecodeSnippet {
 	font-family: Consolas serif;
 	background-color: silver;
-	overflow: auto none;
 	white-space: nowrap;
 	border: 1px solid black;
 }
 .sourcecodeSnippet .lineNumbers {
-	display: inline-block;
+	float:left;
 	text-align: right;
 	padding: 0 .5em;
 	border-right: 1px solid black;
 }
 .sourcecodeSnippet .code {
-	display: inline-block;
+	float:left;
+	max-width: 100%;
 	margin-left: 1em;
+	overflow: auto none;
 }
 code .keyword {
 	color: blue;
@@ -66,4 +72,17 @@ code .names {
 }
 code .stringLiteral {
 	color: #46A346;
+}
+
+
+@media (max-width: 600px) {
+	body{
+		width: 98%;
+		font-size: 90%
+	}
+	footer ul li {
+		display: block;
+		width: 100%;
+		margin: 1em auto;
+	}
 }
