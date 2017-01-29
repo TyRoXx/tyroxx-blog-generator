@@ -327,11 +327,6 @@ namespace
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 
-		auto menu_content =
-		    menu(ul(li(link("", "index.html", "Home")) +
-		            li(link("", "articles.html", "Articles (todo)")) +
-		            li(link("", "contact.html", "Contact"))));
-
 		std::string site_title;
 		if (file_name == "index.html")
 		{
@@ -377,11 +372,6 @@ namespace
 			            }
 			        });
 
-		auto footer_content =
-		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
-		              li(link("https://", "twitter.com/tyroxxxx")) +
-		              li(link("mailto:", "tyroxxxx@gmail.com"))));
-
 		auto head_content =
 		    head(tag("meta", attribute("charset", "utf-8"), empty) +
 		         title(site_title) +
@@ -389,8 +379,12 @@ namespace
 		             href("stylesheets.css") + attribute("rel", "stylesheet"),
 		             empty));
 		auto body_content =
-		    body(std::move(menu_content) + h1(text(site_title)) +
-		         std::move(page_content) + std::move(footer_content));
+		    body(std::move(
+#include "pages/menu.hpp"
+		             ) +
+		         h1(text(site_title)) + std::move(page_content) + std::move(
+#include "pages/footer.hpp"
+		                                                              ));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(head_content) + std::move(body_content));
