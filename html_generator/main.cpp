@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
 	static const std::string files_to_generate[] = {
-	    "index.html", "contact.html", "articles.h"};
+	    "index.html", "contact.html", "articles.html"};
 	for (std::string file : files_to_generate)
 	{
 		boost::system::error_code const ec = generate_all_html(
