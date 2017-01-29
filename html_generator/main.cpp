@@ -326,6 +326,12 @@ namespace
 
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
+
+		auto menu_content =
+		    menu(ul(li(link("", "index.html", "Home")) +
+		            li(link("", "articles.html", "Articles (todo)")) +
+		            li(link("", "contact.html", "Contact"))));
+
 		std::string site_title;
 		if (file_name == "index.html")
 		{
@@ -343,24 +349,33 @@ namespace
 		{
 			site_title = "Unknown page";
 		}
-		auto articles = h2(text("Articles")) +
-		                p("Sorry, there are no finished articles yet.");
 
-		auto drafts = h2(text("Drafts")) +
+		auto page_content =
+		    dynamic([&file_name, snippets_source_code](code_sink &sink)
+		            {
+			            if (file_name == "index.html")
+			            {
+				            auto drafts = h2(text("Drafts")) +
 #include "pages/input-validation.hpp"
-		              +
+				                          +
 #include "pages/throwing-constructor.hpp"
-		    ;
-
-		auto menu_content =
-		    menu(ul(li(link("", "index.html", "Home")) +
-		            li(link("", "articles.html", "Articles (todo)")) +
-		            li(link("", "contact.html", "Contact"))));
-
-		auto todo = h2(text("Technical to do list")) +
-		            ul(li(text("compile the code snippets")) +
-		               li(text("[done] color the code snippets")) +
-		               li(text("clang-format the code snippets")));
+				                ;
+				            drafts.generate(sink);
+			            }
+			            if (file_name == "articles.html")
+			            {
+				            p("Sorry, there are no finished articles yet.")
+				                .generate(sink);
+			            }
+			            if (file_name == "contact.html")
+			            {
+				            h2(text("Technical to do list")).generate(sink);
+				            ul(li(text("compile the code snippets")) +
+				               li(text("[done] color the code snippets")) +
+				               li(text("clang-format the code snippets")))
+				                .generate(sink);
+			            }
+			        });
 
 		auto footer_content =
 		    footer(ul(li(link("https://", "github.com/TyRoXx")) +
@@ -375,8 +390,7 @@ namespace
 		             empty));
 		auto body_content =
 		    body(std::move(menu_content) + h1(text(site_title)) +
-		         std::move(articles) + std::move(drafts) + std::move(todo) +
-		         std::move(footer_content));
+		         std::move(page_content) + std::move(footer_content));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(head_content) + std::move(body_content));
