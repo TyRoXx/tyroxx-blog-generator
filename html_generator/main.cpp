@@ -11,6 +11,7 @@
 namespace
 {
 
+
 	bool is_brace(char c)
 	{
 		static std::string const braces = "(){}<>[]";
@@ -115,6 +116,123 @@ namespace
 		        token_type::other};
 	}
 
+    auto render_code(std::string const &code)
+    {
+        using namespace Si::html;
+        return tag(
+            "code",
+            dynamic([code](code_sink &sink)
+                    {
+                        static const std::string keywords[] = {
+                            "alignas",      "alignof",
+                            "and",          "and_eq",
+                            "asm",          "auto",
+                            "bitand",       "bitor",
+                            "bool",         "break",
+                            "case",         "catch",
+                            "char",         "char16_t",
+                            "char32_t",     "class",
+                            "compl",        "const",
+                            "constexpr",    "const_cast",
+                            "continue",     "decltype",
+                            "default",      "delete",
+                            "do",           "double",
+                            "dynamic_cast", "else",
+                            "enum",         "explicit",
+                            "export",       "extern",
+                            "false",        "float",
+                            "for",          "friend",
+                            "goto",         "if",
+                            "inline",       "int",
+                            "long",         "mutable",
+                            "namespace",    "new",
+                            "noexcept",     "not",
+                            "not_eq",       "nullptr",
+                            "operator",     "or",
+                            "or_eq",        "private",
+                            "protected",    "public",
+                            "register",     "reinterpret_cast",
+                            "return",       "short",
+                            "signed",       "sizeof",
+                            "static",       "static_assert",
+                            "static_cast",  "struct",
+                            "switch",       "template",
+                            "this",         "thread_local",
+                            "throw",        "true",
+                            "try",          "typedef",
+                            "typeid",       "typename",
+                            "union",        "unsigned",
+                            "using",        "virtual",
+                            "void",         "volatile",
+                            "wchar_t",      "while",
+                            "xor",          "xor_eq",
+                            "override",     "final"};
+                        auto i = code.begin();
+                        for (;;)
+                        {
+                            token t = find_next_token(i, code.end());
+                        token_switch:
+                            switch (t.type)
+                            {
+                            case token_type::eof:
+                                return;
+
+                            case token_type::string:
+                                span(attribute("class", "stringLiteral"),
+                                     text(t.content))
+                                    .generate(sink);
+                                break;
+
+                            case token_type::identifier:
+                                if (std::find(std::begin(keywords),
+                                              std::end(keywords),
+                                              t.content) != std::end(keywords))
+                                {
+                                    span(attribute("class", "keyword"),
+                                         text(t.content))
+                                        .generate(sink);
+                                }
+                                else
+                                {
+                                    i += t.content.size();
+                                    token next = find_next_token(i, code.end());
+                                    if (next.type == token_type::double_colon)
+                                    {
+                                        span(attribute("class", "names"),
+                                             text(t.content))
+                                            .generate(sink);
+                                    }
+                                    else
+                                    {
+                                        text(t.content).generate(sink);
+                                    }
+                                    t = next;
+                                    goto token_switch;
+                                }
+                                break;
+
+                            case token_type::double_colon:
+                                while (t.type == token_type::identifier ||
+                                       t.type == token_type::double_colon)
+                                {
+                                    span(attribute("class", "names"),
+                                         text(t.content))
+                                        .generate(sink);
+                                    i += t.content.size();
+                                    t = find_next_token(i, code.end());
+                                }
+                                goto token_switch;
+
+                            case token_type::space:
+                            case token_type::other:
+                            case token_type::brace:
+                                text(t.content).generate(sink);
+                            }
+                            i += t.content.size();
+                        }
+                    }));
+    }
+
 	template <class StringLike>
 	auto make_code_snippet(StringLike const &code)
 	{
@@ -127,118 +245,7 @@ namespace
 			line_numbers += boost::lexical_cast<std::string>(i);
 			line_numbers += '\n';
 		}
-		auto code_tag = tag(
-		    "code",
-		    dynamic([code](code_sink &sink)
-		            {
-			            static const std::string keywords[] = {
-			                "alignas",      "alignof",
-			                "and",          "and_eq",
-			                "asm",          "auto",
-			                "bitand",       "bitor",
-			                "bool",         "break",
-			                "case",         "catch",
-			                "char",         "char16_t",
-			                "char32_t",     "class",
-			                "compl",        "const",
-			                "constexpr",    "const_cast",
-			                "continue",     "decltype",
-			                "default",      "delete",
-			                "do",           "double",
-			                "dynamic_cast", "else",
-			                "enum",         "explicit",
-			                "export",       "extern",
-			                "false",        "float",
-			                "for",          "friend",
-			                "goto",         "if",
-			                "inline",       "int",
-			                "long",         "mutable",
-			                "namespace",    "new",
-			                "noexcept",     "not",
-			                "not_eq",       "nullptr",
-			                "operator",     "or",
-			                "or_eq",        "private",
-			                "protected",    "public",
-			                "register",     "reinterpret_cast",
-			                "return",       "short",
-			                "signed",       "sizeof",
-			                "static",       "static_assert",
-			                "static_cast",  "struct",
-			                "switch",       "template",
-			                "this",         "thread_local",
-			                "throw",        "true",
-			                "try",          "typedef",
-			                "typeid",       "typename",
-			                "union",        "unsigned",
-			                "using",        "virtual",
-			                "void",         "volatile",
-			                "wchar_t",      "while",
-			                "xor",          "xor_eq",
-			                "override",     "final"};
-			            auto i = code.begin();
-			            for (;;)
-			            {
-				            token t = find_next_token(i, code.end());
-			            token_switch:
-				            switch (t.type)
-				            {
-				            case token_type::eof:
-					            return;
-
-				            case token_type::string:
-					            span(attribute("class", "stringLiteral"),
-					                 text(t.content))
-					                .generate(sink);
-					            break;
-
-				            case token_type::identifier:
-					            if (std::find(std::begin(keywords),
-					                          std::end(keywords),
-					                          t.content) != std::end(keywords))
-					            {
-						            span(attribute("class", "keyword"),
-						                 text(t.content))
-						                .generate(sink);
-					            }
-					            else
-					            {
-						            i += t.content.size();
-						            token next = find_next_token(i, code.end());
-						            if (next.type == token_type::double_colon)
-						            {
-							            span(attribute("class", "names"),
-							                 text(t.content))
-							                .generate(sink);
-						            }
-						            else
-						            {
-							            text(t.content).generate(sink);
-						            }
-						            t = next;
-						            goto token_switch;
-					            }
-					            break;
-
-				            case token_type::double_colon:
-					            while (t.type == token_type::identifier ||
-					                   t.type == token_type::double_colon)
-					            {
-						            span(attribute("class", "names"),
-						                 text(t.content))
-						                .generate(sink);
-						            i += t.content.size();
-						            t = find_next_token(i, code.end());
-					            }
-					            goto token_switch;
-
-				            case token_type::space:
-				            case token_type::other:
-				            case token_type::brace:
-					            text(t.content).generate(sink);
-				            }
-				            i += t.content.size();
-			            }
-			        }));
+		auto code_tag = render_code(code);
 
 		return div(cl("sourcecodeSnippet"),
 		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
