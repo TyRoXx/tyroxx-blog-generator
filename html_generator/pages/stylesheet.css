@@ -74,6 +74,11 @@ code .stringLiteral {
 	color: #46A346;
 }
 
+@media (min-width: 600px){
+	code, .sourcecodeSnippet .lineNumbers{
+		font-size: 125%;
+	}
+}
 
 @media (max-width: 600px) {
 	body{
