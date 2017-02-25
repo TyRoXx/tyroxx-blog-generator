@@ -691,9 +691,15 @@ int main(int argc, char **argv)
 			{
 				io.run();
 			}
+			catch (boost::system::system_error const &ex)
+			{
+				std::cerr << "boost::system::system_error: " << ex.code()
+				          << '\n';
+				io.reset();
+			}
 			catch (std::exception const &ex)
 			{
-				std::cerr << "Exception: " << ex.what() << '\n';
+				std::cerr << "std::exception: " << ex.what() << '\n';
 				io.reset();
 			}
 		}
