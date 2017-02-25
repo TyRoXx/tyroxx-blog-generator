@@ -7,6 +7,11 @@
 #include <silicium/sink/throwing_sink.hpp>
 #include <silicium/html/tree.hpp>
 #include "tags.hpp"
+#include <beast/http/read.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/http/write.hpp>
+#include <beast/core/streambuf.hpp>
+#include <ventura/read_file.hpp>
 
 namespace
 {
@@ -401,16 +406,178 @@ namespace
 			return ex.code();
 		}
 	}
+
+	struct file_client
+	{
+		boost::asio::ip::tcp::socket socket;
+		beast::streambuf receive_buffer;
+		beast::http::response<beast::http::string_body> response;
+
+		explicit file_client(boost::asio::ip::tcp::socket socket,
+		                     beast::streambuf receive_buffer)
+		    : socket(std::move(socket))
+		    , receive_buffer(std::move(receive_buffer))
+		{
+		}
+	};
+
+	struct http_client
+	{
+		boost::asio::ip::tcp::socket socket;
+		beast::streambuf receive_buffer;
+		beast::http::request<beast::http::string_body> request;
+
+		explicit http_client(boost::asio::ip::tcp::socket socket,
+		                     beast::streambuf receive_buffer)
+		    : socket(std::move(socket))
+		    , receive_buffer(std::move(receive_buffer))
+		{
+		}
+	};
+
+	void begin_serve(std::shared_ptr<http_client> client,
+	                 ventura::absolute_path const &document_root);
+
+	void serve_prepared_response(
+	    std::shared_ptr<file_client> client, bool const is_keep_alive,
+	    ventura::absolute_path const &document_root,
+	    boost::optional<boost::string_ref> const content_type)
+	{
+		client->response.version = 11;
+		client->response.fields.insert(
+		    "Content-Length",
+		    boost::lexical_cast<std::string>(client->response.body.size()));
+		if (content_type)
+		{
+			client->response.fields.insert("Content-Type", *content_type);
+		}
+		beast::http::async_write(
+		    client->socket, client->response,
+		    [client, is_keep_alive,
+		     document_root](boost::system::error_code const ec)
+		    {
+			    Si::throw_if_error(ec);
+			    if (is_keep_alive)
+			    {
+				    auto http_client_again = std::make_shared<http_client>(
+				        std::move(client->socket),
+				        std::move(client->receive_buffer));
+				    begin_serve(http_client_again, document_root);
+			    }
+			    else
+			    {
+				    client->socket.shutdown(
+				        boost::asio::ip::tcp::socket::shutdown_both);
+			    }
+			});
+	}
+
+	void serve_static_file(std::shared_ptr<file_client> client,
+	                       bool const is_keep_alive,
+	                       ventura::absolute_path const &document_root,
+	                       ventura::absolute_path const &served_document)
+	{
+		Si::visit<void>(
+		    ventura::read_file(
+		        ventura::safe_c_str(ventura::to_os_string(served_document))),
+		    [&](std::vector<char> content)
+		    {
+			    // TODO: avoid the copy of the content
+			    client->response.body.assign(content.begin(), content.end());
+			    client->response.reason = "OK";
+			    client->response.status = 200;
+			},
+		    [&](boost::system::error_code const ec)
+		    {
+			    std::cerr << "Could not read file " << served_document << ": "
+			              << ec << '\n';
+			    client->response.reason = "Internal Server Error";
+			    client->response.status = 500;
+			    client->response.body = client->response.reason;
+			},
+		    [&](ventura::read_file_problem const problem)
+		    {
+			    std::cerr << "Could not read file " << served_document
+			              << " due to problem " << static_cast<int>(problem)
+			              << '\n';
+			    client->response.reason = "Internal Server Error";
+			    client->response.status = 500;
+			    client->response.body = client->response.reason;
+			});
+		serve_prepared_response(client, is_keep_alive, document_root,
+		                        boost::none);
+	}
+
+	void begin_serve(std::shared_ptr<http_client> client,
+	                 ventura::absolute_path const &document_root)
+	{
+		beast::http::async_read(
+		    client->socket, client->receive_buffer, client->request,
+		    [client, document_root](boost::system::error_code const ec)
+		    {
+			    Si::throw_if_error(ec);
+			    std::shared_ptr<file_client> const new_client =
+			        std::make_shared<file_client>(
+			            std::move(client->socket),
+			            std::move(client->receive_buffer));
+			    if (!client->request.url.empty() &&
+			        (client->request.url.front() == '/'))
+			    {
+				    boost::filesystem::path requested_file(
+				        client->request.url.begin() + 1,
+				        client->request.url.end());
+				    if (requested_file.empty())
+				    {
+					    requested_file = "index.html";
+				    }
+				    if (requested_file.is_relative())
+				    {
+					    serve_static_file(
+					        new_client,
+					        beast::http::is_keep_alive(client->request),
+					        document_root,
+					        document_root / ventura::relative_path(
+					                            std::move(requested_file)));
+					    return;
+				    }
+			    }
+			    new_client->response.reason = "Bad Request";
+			    new_client->response.status = 400;
+			    new_client->response.body = new_client->response.reason;
+			    serve_prepared_response(
+			        new_client, beast::http::is_keep_alive(client->request),
+			        document_root, boost::string_ref("text/html"));
+			});
+	}
+
+	void begin_accept(boost::asio::ip::tcp::acceptor &acceptor,
+	                  ventura::absolute_path const &document_root)
+	{
+		auto client = std::make_shared<http_client>(
+		    boost::asio::ip::tcp::socket(acceptor.get_io_service()),
+		    beast::streambuf());
+		acceptor.async_accept(client->socket,
+		                      [&acceptor, client, document_root](
+		                          boost::system::error_code const ec)
+		                      {
+			                      Si::throw_if_error(ec);
+			                      begin_accept(acceptor, document_root);
+			                      begin_serve(client, document_root);
+			                  });
+	}
 }
 
 int main(int argc, char **argv)
 {
 	std::string output_option;
+	boost::uint16_t web_server_port = 0;
 
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()("help", "produce help message")(
 	    "output", boost::program_options::value(&output_option),
-	    "a directory to put the HTML files into");
+	    "a directory to put the HTML files into")(
+	    "serve", boost::program_options::value(&web_server_port),
+	    "serve the output directory on this port");
 
 	boost::program_options::positional_options_description positional;
 	positional.add("output", 1);
@@ -497,8 +664,38 @@ int main(int argc, char **argv)
 		while (itter != end(itter))
 		{
 			const boost::filesystem::directory_entry file = *itter;
-			std::cout << file.path().filename().c_str();
+			std::cout << file.path().filename() << '\n';
 			itter.increment(ec);
+		}
+	}
+
+	if (vm.count("serve"))
+	{
+		using namespace boost::asio;
+
+		io_service io;
+
+		ip::tcp::acceptor acceptor_v6(
+		    io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
+		acceptor_v6.listen();
+		begin_accept(acceptor_v6, *output_root);
+
+		ip::tcp::acceptor acceptor_v4(
+		    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
+		acceptor_v4.listen();
+		begin_accept(acceptor_v4, *output_root);
+
+		while (!io.stopped())
+		{
+			try
+			{
+				io.run();
+			}
+			catch (std::exception const &ex)
+			{
+				std::cerr << "Exception: " << ex.what() << '\n';
+				io.reset();
+			}
 		}
 	}
 }
