@@ -12,6 +12,7 @@
 #include <beast/http/write.hpp>
 #include <beast/core/streambuf.hpp>
 #include <ventura/read_file.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 namespace
 {
