@@ -63,9 +63,9 @@ footer {
 	margin-left: 1em;
 	overflow: auto none;
 }
+
 code .keyword {
-	color: blue;
-	font-weight: bold;
+	color: blue;	
 }
 code .names {
 	color: purple;
