@@ -2,6 +2,11 @@
 a {
 	color: black;
 }
+pre, code{
+    padding: 0;
+    margin: 0;
+}
+
 br{
 	clear:both;
 }
@@ -12,10 +17,6 @@ body {
 }
 li{
 	list-style: square;
-}
-
-code{
-	font-size: 150%;
 }
 /* Menu and footer defintions */
 menu a, footer a {
@@ -45,23 +46,34 @@ footer {
 }
 
 /* Formating the source code and its snippets*/
-.sourcecodeSnippet {
+.sourcecodeSnippet{
+    margin: 1em 0;
+}
+.sourcecodeSnippet, .inlineCodeSnippet {
 	font-family: monospace;
 	white-space: nowrap;
 }
-.sourcecodeSnippet .lineNumbers {
-	float:left;
-	font-size: 150%;
+.sourcecodeSnippet > *{
+    display: inline-block;
+    vertical-align: top;
+    font-size: 125%;
+}
+
+.sourcecodeSnippet pre.lineNumbers {
+    margin-right: 1em;
 	text-align: right;
 	padding: 0 .5em;
 	border-right: 1px solid black;
 }
-.sourcecodeSnippet .code {
-	margin-top: 1.5em;
-	float:left;
+.sourcecodeSnippet code {
+	display: block;
 	width: 0;
-	margin-left: 1em;
 	overflow: auto none;
+}
+
+.inlineCodeSnippet {
+    display: inline;
+    font-size: 125%;
 }
 
 code .keyword {
@@ -72,12 +84,6 @@ code .names {
 }
 code .stringLiteral {
 	color: #46A346;
-}
-
-@media (min-width: 600px){
-	code, .sourcecodeSnippet .lineNumbers{
-		font-size: 125%;
-	}
 }
 
 @media (max-width: 600px) {

@@ -237,6 +237,11 @@ namespace
 			        }));
 	}
 
+	auto inline_code(std::string const &code)
+	{
+		return div(cl("inlineCodeSnippet"), render_code(code));
+	}
+
 	template <class StringLike>
 	auto make_code_snippet(StringLike const &code)
 	{
@@ -253,7 +258,7 @@ namespace
 
 		return div(cl("sourcecodeSnippet"),
 		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
-		               pre(cl("code"), code_tag) + br());
+		               pre(code_tag));
 	}
 
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
@@ -377,12 +382,15 @@ namespace
 			            }
 			        });
 
-		auto head_content =
-		    head(tag("meta", attribute("charset", "utf-8"), empty) +
-		         title(site_title) +
-		         tag("link",
-		             href("stylesheets.css") + attribute("rel", "stylesheet"),
-		             empty));
+		auto head_content = head(
+		    tag("meta", attribute("charset", "utf-8"), empty) +
+		    tag("meta",
+		        attribute("name", "viewport") +
+		            attribute("content", "width=device-width, initial-scale=1"),
+		        empty) +
+		    title(site_title) + tag("link", href("stylesheets.css") +
+		                                        attribute("rel", "stylesheet"),
+		                            empty));
 		auto body_content =
 		    body(std::move(
 #include "pages/menu.hpp"

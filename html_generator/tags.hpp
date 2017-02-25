@@ -203,6 +203,13 @@ namespace
 		return tag("br", empty);
 	}
 
+	template <class Attributes>
+	auto br(Attributes &&attributes)
+	{
+		using namespace Si::html;
+		return tag("br", std::forward<Attributes>(attributes), empty);
+	}
+
 	//----------------IMG tag----------------
 	auto img(std::string const &content)
 	{
