@@ -65,8 +65,6 @@ if(WIN32)
 	add_definitions("-DBOOST_ASIO_HAS_IOCP")
 endif()
 
-add_subdirectory("external/rapidcheck-6a065dded71788dd0e35c5003e0e1905d55336ae")
-
 include_directories(.)
 
 add_subdirectory("tests")
