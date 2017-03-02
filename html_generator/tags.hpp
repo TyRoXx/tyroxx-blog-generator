@@ -155,13 +155,6 @@ namespace
 		return Si::html::tag("td", std::forward<Element>(content));
 	}
 
-	//----------------TH tag----------------
-	auto th(std::string const &content)
-	{
-		using namespace Si::html;
-		return tag("th", Si::html::text(content));
-	}
-
 	//----------------UL tag----------------
 	template <class Element>
 	auto ul(Element &&content)
@@ -196,13 +189,6 @@ namespace
 		                     std::forward<Element>(content));
 	}
 
-	//----------------BR tag----------------
-	auto br()
-	{
-		using namespace Si::html;
-		return tag("br", empty);
-	}
-
 	template <class Attributes>
 	auto br(Attributes &&attributes)
 	{
@@ -210,23 +196,10 @@ namespace
 		return tag("br", std::forward<Attributes>(attributes), empty);
 	}
 
-	//----------------IMG tag----------------
-	auto img(std::string const &content)
-	{
-		using namespace Si::html;
-		return tag("img", attribute("src", content), empty);
-	}
-
 	//----------------classes attrib----------------
 	auto cl(std::string const &content)
 	{
 		return Si::html::attribute("class", content);
-	}
-
-	//----------------id attrib----------------
-	auto id(std::string const &content)
-	{
-		return Si::html::attribute("id", content);
 	}
 
 	//----------------href attrib----------------
