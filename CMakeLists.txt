@@ -13,7 +13,7 @@ if(UNIX)
 			add_definitions(-std=c++0x)
 		endif()
 	endif()
-	add_definitions("-Wall -Wextra -Wconversion -Wvla")
+	add_definitions("-Wall -Wextra -Wconversion -Wvla -Werror -Wundef")
 	add_definitions("-Wno-missing-field-initializers")
 
 	option(FILESERVER_PEDANTIC "pass -pedantic to the compiler (may generate useless warnings)" ON)
