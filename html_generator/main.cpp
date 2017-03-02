@@ -40,8 +40,8 @@ namespace
 		token_type type;
 	};
 
-	template <class InputIterator>
-	token find_next_token(InputIterator begin, InputIterator end)
+	template <class RandomAccessIterator>
+	token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 	{
 		if (begin == end)
 		{
@@ -87,7 +87,7 @@ namespace
 		{
 			char first = *begin;
 			bool escaped = false;
-			InputIterator end_index =
+			RandomAccessIterator end_index =
 			    std::find_if(begin + 1, end, [&escaped, first](char c)
 			                 {
 				                 if (c == '\\')
