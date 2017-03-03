@@ -16,10 +16,9 @@
 
 namespace
 {
-
-	bool is_brace(char c)
+	bool is_brace(char const c)
 	{
-		static std::string const braces = "(){}<>[]";
+		static boost::string_ref const braces = "(){}<>[]";
 		return std::find(braces.begin(), braces.end(), c) != braces.end();
 	}
 
@@ -121,14 +120,14 @@ namespace
 		        token_type::other};
 	}
 
-	auto render_code(std::string const &code)
+	auto render_code(std::string code)
 	{
 		using namespace Si::html;
 		return tag(
 		    "code",
-		    dynamic([code](code_sink &sink)
+		    dynamic([code = std::move(code)](code_sink & sink)
 		            {
-			            static const std::string keywords[] = {
+			            static const boost::string_ref keywords[] = {
 			                "alignas",      "alignof",
 			                "and",          "and_eq",
 			                "asm",          "auto",
@@ -238,9 +237,9 @@ namespace
 			        }));
 	}
 
-	auto inline_code(std::string const &code)
+	auto inline_code(std::string code)
 	{
-		return div(cl("inlineCodeSnippet"), render_code(code));
+		return div(cl("inlineCodeSnippet"), render_code(std::move(code)));
 	}
 
 	template <class StringLike>
@@ -256,17 +255,15 @@ namespace
 			line_numbers += '\n';
 		}
 		auto code_tag = render_code(code);
-
 		return div(cl("sourcecodeSnippet"),
 		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
-		               pre(code_tag));
+		               pre(std::move(code_tag)));
 	}
 
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
-	                       char const *name)
+	                       ventura::relative_path const &name)
 	{
-		ventura::absolute_path const full_name =
-		    snippets_source_code / ventura::relative_path(name);
+		ventura::absolute_path const full_name = snippets_source_code / name;
 		Si::variant<std::vector<char>, boost::system::error_code,
 		            ventura::read_file_problem> read_result =
 		    ventura::read_file(ventura::safe_c_str(to_os_string(full_name)));
@@ -317,16 +314,17 @@ namespace
 				break;
 			}
 		}
-		return make_code_snippet(clean);
+		return make_code_snippet(std::move(clean));
 	}
 
 	boost::system::error_code
-	generate_all_html(ventura::absolute_path const &snippets_source_code,
+	generate_all_html(ventura::absolute_path snippets_source_code,
 	                  ventura::absolute_path const &existing_output_root,
-	                  std::string const file_name)
+	                  boost::string_ref const file_name)
 	{
 		ventura::absolute_path const index_path =
-		    existing_output_root / ventura::relative_path(file_name);
+		    existing_output_root /
+		    ventura::relative_path(file_name.begin(), file_name.end());
 		Si::error_or<Si::file_handle> const index = ventura::overwrite_file(
 		    ventura::safe_c_str(to_os_string(index_path)));
 		if (index.is_error())
@@ -357,7 +355,10 @@ namespace
 		}
 
 		auto page_content =
-		    dynamic([&file_name, snippets_source_code](code_sink &sink)
+		    dynamic([
+			    &file_name,
+			    snippets_source_code = std::move(snippets_source_code)
+			](code_sink & sink)
 		            {
 			            if (file_name == "index.html")
 			            {
@@ -646,9 +647,9 @@ int main(int argc, char **argv)
 	ventura::copy(
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
-	static const std::string files_to_generate[] = {
+	static const boost::string_ref files_to_generate[] = {
 	    "index.html", "contact.html", "articles.html"};
-	for (std::string file : files_to_generate)
+	for (boost::string_ref const file : files_to_generate)
 	{
 		boost::system::error_code const ec = generate_all_html(
 		    repo / ventura::relative_path("snippets"), *output_root, file);
