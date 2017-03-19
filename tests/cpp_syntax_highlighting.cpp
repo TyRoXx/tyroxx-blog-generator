@@ -107,3 +107,31 @@ BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
 		    return (std::string("Number of quotes must be even") == ex.what());
 		});
 }
+
+BOOST_AUTO_TEST_CASE(render_code_raw_realistic_example)
+{
+	check_code_rendering(
+	    R"(BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
+{
+	BOOST_CHECK_EXCEPTION(
+	    check_code_rendering("\"abc\'", ""), std::invalid_argument,
+	    [](std::invalid_argument const &ex)
+	    {
+		    return (std::string("Number of quotes must be even") == ex.what());
+		});
+})",
+	    R"(BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
+{
+	BOOST_CHECK_EXCEPTION(
+	    check_code_rendering(<span class="stringLiteral">&quot;\&quot;abc\&apos;&quot;</span>, <span class="stringLiteral">&quot;&quot;</span>), <span class="names">std</span><span class="names">::</span><span class="names">invalid_argument</span>,
+	    [](<span class="names">std</span><span class="names">::</span><span class="names">invalid_argument</span> <span class="keyword">const</span><span class="names">const</span> &amp;ex)
+	    {
+		    <span class="keyword">return</span><span class="names">return</span> (<span class="names">std</span><span class="names">::</span><span class="names">string</span>(<span class="stringLiteral">&quot;Number of quotes must be even&quot;</span>) == ex.what());
+		});
+})");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_include)
+{
+	check_code_rendering("#include <vector>\n", "#include &lt;vector&gt;\n");
+}
