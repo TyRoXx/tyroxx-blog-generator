@@ -1,7 +1,6 @@
 [requires]
 ventura/0.8@TyRoXx/stable
 Beast/1.0.0.b29@TyRoXx/master
-rapidcheck/2016.10.24@TyRoXx/master
 
 [generators]
 cmake
