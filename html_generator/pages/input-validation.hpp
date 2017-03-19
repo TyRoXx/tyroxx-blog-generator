@@ -1,4 +1,3 @@
-
 h3(link("#", "input-validation", "Input validation")) + h4(text("Integers")) +
     text("................") +
     snippet_from_file(

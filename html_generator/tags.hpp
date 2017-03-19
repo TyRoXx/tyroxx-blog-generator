@@ -1,3 +1,4 @@
+#pragma once
 #include <silicium/html/tree.hpp>
 #include <boost/intrusive/options.hpp>
 
