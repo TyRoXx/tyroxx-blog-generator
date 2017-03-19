@@ -39,3 +39,71 @@ BOOST_AUTO_TEST_CASE(render_code_raw_string_escape_backslash)
 	    "\"my string\\\\\"",
 	    R"(<span class="stringLiteral">&quot;my string\\&quot;</span>)");
 }
+
+BOOST_AUTO_TEST_CASE(render_code_raw_char_literal)
+{
+	check_code_rendering("\'a\'",
+	                     R"(<span class="stringLiteral">&apos;a&apos;</span>)");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_identifier)
+{
+	check_code_rendering("identifier",
+	                     R"(identifier)");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_keyword)
+{
+	check_code_rendering(
+	    "const",
+	    R"(<span class="keyword">const</span><span class="names">const</span>)");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_scoped_identifier)
+{
+	check_code_rendering(
+	    "scope::identifier",
+	    R"(<span class="names">scope</span><span class="names">::</span><span class="names">identifier</span>)");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_global_scoped_identifier)
+{
+	check_code_rendering(
+	    "::scope::identifier",
+	    R"(<span class="names">::</span><span class="names">scope</span><span class="names">::</span><span class="names">identifier</span>)");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_space)
+{
+	check_code_rendering(" \t\r\n\n", " \t\r\n\n");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_empty_line)
+{
+	check_code_rendering("\na", "\na");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_single_colon)
+{
+	check_code_rendering(":", ":");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_colon_prefix)
+{
+	check_code_rendering(":a", ":a");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_braces)
+{
+	check_code_rendering("{}", "{}");
+}
+
+BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
+{
+	BOOST_CHECK_EXCEPTION(
+	    check_code_rendering("\"abc\'", ""), std::invalid_argument,
+	    [](std::invalid_argument const &ex)
+	    {
+		    return (std::string("Number of quotes must be even") == ex.what());
+		});
+}

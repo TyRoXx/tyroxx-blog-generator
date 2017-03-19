@@ -193,7 +193,6 @@ inline auto render_code_raw(std::string code)
 					               t = next;
 					               goto token_switch;
 				               }
-				               break;
 
 			               case token_type::double_colon:
 				               while (t.type == token_type::identifier ||
