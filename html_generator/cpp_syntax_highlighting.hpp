@@ -175,6 +175,7 @@ inline auto render_code_raw(std::string code)
 					               tags::span(attribute("class", "keyword"),
 					                          text(t.content))
 					                   .generate(sink);
+					               break;
 				               }
 				               else
 				               {
@@ -193,7 +194,6 @@ inline auto render_code_raw(std::string code)
 					               t = next;
 					               goto token_switch;
 				               }
-			               // fall through
 
 			               case token_type::double_colon:
 				               while (t.type == token_type::identifier ||
