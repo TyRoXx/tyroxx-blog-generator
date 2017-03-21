@@ -19,7 +19,8 @@ namespace
 {
 	auto inline_code(std::string code)
 	{
-		return div(cl("inlineCodeSnippet"), render_code(std::move(code)));
+		return tags::div(tags::cl("inlineCodeSnippet"),
+		                 render_code(std::move(code)));
 	}
 
 	template <class StringLike>
@@ -35,9 +36,10 @@ namespace
 			line_numbers += '\n';
 		}
 		auto code_tag = render_code(code);
-		return div(cl("sourcecodeSnippet"),
-		           pre(cl("lineNumbers"), text(std::move(line_numbers))) +
-		               pre(std::move(code_tag)));
+		return tags::div(
+		    tags::cl("sourcecodeSnippet"),
+		    tags::pre(tags::cl("lineNumbers"), text(std::move(line_numbers))) +
+		        tags::pre(std::move(code_tag)));
 	}
 
 	auto snippet_from_file(ventura::absolute_path const &snippets_source_code,
@@ -134,53 +136,54 @@ namespace
 			site_title = "Unknown page";
 		}
 
-		auto page_content =
-		    dynamic([
-			    &file_name,
-			    snippets_source_code = std::move(snippets_source_code)
+		auto page_content = dynamic(
+		    [
+			  &file_name,
+			  snippets_source_code = std::move(snippets_source_code)
 			](code_sink & sink)
-		            {
-			            if (file_name == "index.html")
-			            {
-				            auto drafts = h2(text("Drafts")) +
+		    {
+			    if (file_name == "index.html")
+			    {
+				    auto drafts = tags::h2(text("Drafts")) +
 #include "pages/input-validation.hpp"
-				                          +
+				                  +
 #include "pages/throwing-constructor.hpp"
-				                ;
-				            drafts.generate(sink);
-			            }
-			            if (file_name == "articles.html")
-			            {
-				            p("Sorry, there are no finished articles yet.")
-				                .generate(sink);
-			            }
-			            if (file_name == "contact.html")
-			            {
-				            h2(text("Technical to do list")).generate(sink);
-				            ul(li(text("compile the code snippets")) +
-				               li(text("[done] color the code snippets")) +
-				               li(text("clang-format the code snippets")))
-				                .generate(sink);
-			            }
-			        });
+				        ;
+				    drafts.generate(sink);
+			    }
+			    if (file_name == "articles.html")
+			    {
+				    tags::p("Sorry, there are no finished articles yet.")
+				        .generate(sink);
+			    }
+			    if (file_name == "contact.html")
+			    {
+				    tags::h2(text("Technical to do list")).generate(sink);
+				    tags::ul(tags::li(text("compile the code snippets")) +
+				             tags::li(text("[done] color the code snippets")) +
+				             tags::li(text("clang-format the code snippets")))
+				        .generate(sink);
+			    }
+			});
 
-		auto head_content = head(
+		auto head_content = tags::head(
 		    tag("meta", attribute("charset", "utf-8"), empty) +
 		    tag("meta",
 		        attribute("name", "viewport") +
 		            attribute("content", "width=device-width, initial-scale=1"),
 		        empty) +
-		    title(site_title) + tag("link", href("stylesheets.css") +
-		                                        attribute("rel", "stylesheet"),
-		                            empty));
-		auto body_content = body(
+		    tags::title(site_title) +
+		    tag("link",
+		        tags::href("stylesheets.css") + attribute("rel", "stylesheet"),
+		        empty));
+		auto body_content = tags::body(
 #include "pages/menu.hpp"
-		    +h1(text(site_title)) + std::move(page_content) +
+		    +tags::h1(text(site_title)) + std::move(page_content) +
 #include "pages/footer.hpp"
 		    );
 		auto const document =
 		    raw("<!DOCTYPE html>") +
-		    html(std::move(head_content) + std::move(body_content));
+		    tags::html(std::move(head_content) + std::move(body_content));
 		auto erased_sink = Si::Sink<char, Si::success>::erase(
 		    Si::make_throwing_sink(index_sink));
 		try

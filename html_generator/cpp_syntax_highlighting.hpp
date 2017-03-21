@@ -162,8 +162,8 @@ inline auto render_code_raw(std::string code)
 				               return;
 
 			               case token_type::string:
-				               span(attribute("class", "stringLiteral"),
-				                    text(t.content))
+				               tags::span(attribute("class", "stringLiteral"),
+				                          text(t.content))
 				                   .generate(sink);
 				               break;
 
@@ -172,8 +172,8 @@ inline auto render_code_raw(std::string code)
 				                             std::end(keywords),
 				                             t.content) != std::end(keywords))
 				               {
-					               span(attribute("class", "keyword"),
-					                    text(t.content))
+					               tags::span(attribute("class", "keyword"),
+					                          text(t.content))
 					                   .generate(sink);
 				               }
 				               else
@@ -182,8 +182,8 @@ inline auto render_code_raw(std::string code)
 					               token next = find_next_token(i, code.end());
 					               if (next.type == token_type::double_colon)
 					               {
-						               span(attribute("class", "names"),
-						                    text(t.content))
+						               tags::span(attribute("class", "names"),
+						                          text(t.content))
 						                   .generate(sink);
 					               }
 					               else
@@ -198,8 +198,8 @@ inline auto render_code_raw(std::string code)
 				               while (t.type == token_type::identifier ||
 				                      t.type == token_type::double_colon)
 				               {
-					               span(attribute("class", "names"),
-					                    text(t.content))
+					               tags::span(attribute("class", "names"),
+					                          text(t.content))
 					                   .generate(sink);
 					               i += t.content.size();
 					               t = find_next_token(i, code.end());
