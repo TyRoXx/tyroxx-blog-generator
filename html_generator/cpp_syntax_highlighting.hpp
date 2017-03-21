@@ -193,6 +193,7 @@ inline auto render_code_raw(std::string code)
 					               t = next;
 					               goto token_switch;
 				               }
+			               // fall through
 
 			               case token_type::double_colon:
 				               while (t.type == token_type::identifier ||
@@ -210,6 +211,7 @@ inline auto render_code_raw(std::string code)
 			               case token_type::other:
 			               case token_type::brace:
 				               text(t.content).generate(sink);
+				               break;
 			               }
 			               i += t.content.size();
 		               }
