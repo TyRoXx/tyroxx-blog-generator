@@ -177,9 +177,9 @@ namespace
 		    body(std::move(
 #include "pages/menu.hpp"
 		             ) +
-		         h1(text(site_title)) + std::move(page_content) + std::move(
+		         h1(text(site_title)) + std::move(page_content) +
 #include "pages/footer.hpp"
-		                                                              ));
+		         );
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    html(std::move(head_content) + std::move(body_content));
