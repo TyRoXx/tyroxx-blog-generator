@@ -175,6 +175,7 @@ inline auto render_code_raw(std::string code)
 					               tags::span(attribute("class", "keyword"),
 					                          text(t.content))
 					                   .generate(sink);
+                                   break;
 				               }
 				               else
 				               {
