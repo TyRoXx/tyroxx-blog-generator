@@ -25,18 +25,25 @@ menu a, footer a, menu a:visited{
 menu, footer{
 	padding: 0;
 	width: 100%;
-	background-color: black;
 }
 menu ul, footer ul {
 	padding: 0;
 	margin: 0;
-	padding: 20px 0;
 	list-style: none;
 }
-menu li, footer li {
-	display: inline-block;
+menu ul li, footer ul li {
+        display: inline-block;
 	width: 33.33%;
+        height: 100%;
 	text-align: center;
+        background-color: black;
+}
+menu ul li p, footer ul li p{
+        padding: 20px 0;
+        margin: 0;
+}
+menu ul li:hover, footer ul li:hover {
+        background-color: grey;
 }
 footer {
 	margin-bottom: 1em;

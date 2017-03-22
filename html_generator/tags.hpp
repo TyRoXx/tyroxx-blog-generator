@@ -210,6 +210,18 @@ namespace tags
 		return Si::html::attribute("href", content);
 	}
 
+    inline auto href_external(std::string const &content)
+    {
+        return Si::html::attribute("href", content) + Si::html::attribute("target", "_blank");
+    }
+
+    template <class Element, class Attributes>
+    inline auto a(Attributes &&attributes, Element &&content)
+    {
+        return Si::html::tag("a", std::forward<Attributes>(attributes),
+                             std::forward<Element>(content));
+    }
+
 	// PSEUDO TAG: link (emulates the a-tag)
 	template <std::size_t N>
 	auto link(std::string const &protocol,
@@ -222,8 +234,7 @@ namespace tags
 		    {
 			    if (protocol == "http://" || protocol == "https://")
 			    {
-				    tag("a", href(protocol + address_without_protocol) +
-				                 attribute("target", "_blank"),
+                    tag("a", href_external(protocol + address_without_protocol),
 				        text(caption))
 				        .generate(sink);
 			    }
