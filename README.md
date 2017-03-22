@@ -9,6 +9,10 @@
 * for Visual Studio, use the CMake GUI to generate your solution as usual and choose the right build directory
 * requires GCC version >= 4.9 or Visual Studio 2015
 
+# How to format the code
+* make sure that clang-format 3.7 is installed
+* build `clang-format` in Visual Studio or build the `clang-format` target with `make` or `ninja`
+
 # Changelog
 See a list of the most important changes that were made
 
