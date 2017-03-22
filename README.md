@@ -11,7 +11,13 @@
 
 # How to format the code
 * make sure that clang-format 3.7 is installed
-* build `clang-format` in Visual Studio or build the `clang-format` target with `make` or `ninja`
+  * http://releases.llvm.org/download.html#3.7.1
+  * or run `sudo apt-get install clang-format-3.7`
+* Visual Studio: build the `clang-format` target
+* Linux etc:
+    $ make clang-format
+  or
+    $ ninja clang-format
 
 # Changelog
 See a list of the most important changes that were made
