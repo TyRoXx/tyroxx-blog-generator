@@ -1,3 +1,4 @@
+#include <string>
 struct widget
 {
 	explicit widget(std::string const &important_file)
