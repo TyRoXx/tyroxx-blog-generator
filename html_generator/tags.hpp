@@ -226,12 +226,13 @@ namespace tags
 	// PSEUDO TAG: link (emulates the a-tag)
 	template <std::size_t N>
 	auto link(std::string const &protocol,
-	          char const (&address_without_protocol)[N],
+	          char const(&address_without_protocol)[N],
 	          std::string const &caption)
 	{
 		using namespace Si::html;
 		return dynamic(
-		    [protocol, &address_without_protocol, caption](code_sink &sink) {
+		    [protocol, &address_without_protocol, caption](code_sink &sink)
+		    {
 			    if (protocol == "http://" || protocol == "https://")
 			    {
 				    tag("a", href_new_tab(protocol + address_without_protocol),
@@ -249,7 +250,7 @@ namespace tags
 
 	template <std::size_t N>
 	auto link(std::string const &protocol,
-	          char const (&address_without_protocol)[N])
+	          char const(&address_without_protocol)[N])
 	{
 		return link(protocol, address_without_protocol,
 		            address_without_protocol);
@@ -257,7 +258,7 @@ namespace tags
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)
 	template <std::size_t N>
-	auto anchor_attributes(char const (&name)[N])
+	auto anchor_attributes(char const(&name)[N])
 	{
 		using namespace Si::html;
 		return attribute("name", name) + href(std::string("#") + name);
