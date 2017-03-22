@@ -33,6 +33,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 	{
 		return {"", token_type::eof};
 	}
+    // Detecting identifier
 	if (isalnum(*begin))
 	{
 		return {std::string(begin, std::find_if(begin + 1, end,
@@ -43,6 +44,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 			                                    })),
 		        token_type::identifier};
 	}
+    // Detecting name spaces
 	if (*begin == ':')
 	{
 		if (begin + 1 == end)
@@ -55,6 +57,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		}
 		return {"::", token_type::double_colon};
 	}
+    // Detecting whitespaces
 	if (!isprint(*begin))
 	{
 		return {std::string(begin, std::find_if(begin + 1, end,
@@ -64,11 +67,12 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 			                                    })),
 		        token_type::space};
 	}
+    //Detecting braces
 	if (is_brace(*begin))
 	{
 		return {std::string(begin, begin + 1), token_type::brace};
 	}
-
+    //Detecting escaped characters
 	if (*begin == '"' || *begin == '\'')
 	{
 		char first = *begin;
@@ -94,9 +98,10 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		}
 		return {std::string(begin, end_index + 1), token_type::string};
 	}
+    //Detecting pre processor directives
     if(*begin == '#'){
         return {std::string(begin, std::find_if(begin +1, end, [](char c){
-                return c == '\n' || c == '\r';
+                return c == '\n' || c == '\r' || c == '"';
             })), token_type::preprocessor};
     }
 	return {std::string(begin, std::find_if(begin + 1, end,
