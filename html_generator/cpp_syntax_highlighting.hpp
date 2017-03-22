@@ -225,15 +225,6 @@ inline auto render_code_raw(std::string code)
 			i += t.content.size();
 		}
 	});
-case token_type::space:
-case token_type::other:
-case token_type::brace:
-	text(t.content).generate(sink);
-	break;
-}
-i += t.content.size();
-}
-});
 }
 
 inline auto render_code(std::string code)
