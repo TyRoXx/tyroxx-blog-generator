@@ -462,37 +462,50 @@ int main(int argc, char **argv)
 
 	if (vm.count("serve"))
 	{
-		using namespace boost::asio;
-
-		io_service io;
-
-		ip::tcp::acceptor acceptor_v6(
-		    io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
-		acceptor_v6.listen();
-		begin_accept(acceptor_v6, *output_root);
-
-		ip::tcp::acceptor acceptor_v4(
-		    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
-		acceptor_v4.listen();
-		begin_accept(acceptor_v4, *output_root);
-
-		while (!io.stopped())
+		try
 		{
-			try
+			using namespace boost::asio;
+
+			io_service io;
+
+			ip::tcp::acceptor acceptor_v6(
+			    io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
+			acceptor_v6.listen();
+			begin_accept(acceptor_v6, *output_root);
+
+			ip::tcp::acceptor acceptor_v4(
+			    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
+			acceptor_v4.listen();
+			begin_accept(acceptor_v4, *output_root);
+
+			while (!io.stopped())
 			{
-				io.run();
+				try
+				{
+					io.run();
+				}
+				catch (boost::system::system_error const &ex)
+				{
+					std::cerr << "boost::system::system_error: " << ex.code()
+					          << '\n';
+					io.reset();
+				}
+				catch (std::exception const &ex)
+				{
+					std::cerr << "std::exception: " << ex.what() << '\n';
+					io.reset();
+				}
 			}
-			catch (boost::system::system_error const &ex)
-			{
-				std::cerr << "boost::system::system_error: " << ex.code()
-				          << '\n';
-				io.reset();
-			}
-			catch (std::exception const &ex)
-			{
-				std::cerr << "std::exception: " << ex.what() << '\n';
-				io.reset();
-			}
+		}
+		catch (boost::system::system_error const &ex)
+		{
+			std::cerr << "boost::system::system_error: " << ex.code() << '\n';
+			return 1;
+		}
+		catch (std::exception const &ex)
+		{
+			std::cerr << "std::exception: " << ex.what() << '\n';
+			return 1;
 		}
 	}
 }
