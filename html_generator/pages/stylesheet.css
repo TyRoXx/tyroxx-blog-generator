@@ -86,6 +86,10 @@ code .stringLiteral {
 	color: #46A346;
 }
 
+code .preprocessor{
+        color: lightblue;
+}
+
 @media (max-width: 600px) {
 	body{
 		width: 98%;
