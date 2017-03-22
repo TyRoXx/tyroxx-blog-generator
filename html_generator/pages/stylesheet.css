@@ -19,10 +19,7 @@ li{
 	list-style: square;
 }
 /* Menu and footer defintions */
-menu a, footer a {
-	color: white;
-}
-menu a:visted {
+menu a, footer a, menu a:visited{
 	color: white;
 }
 menu, footer{
@@ -58,7 +55,6 @@ footer {
     vertical-align: top;
     font-size: 125%;
 }
-
 .sourcecodeSnippet pre.lineNumbers {
     margin-right: 1em;
 	text-align: right;
@@ -70,12 +66,12 @@ footer {
 	width: 0;
 	overflow: auto none;
 }
-
 .inlineCodeSnippet {
     display: inline;
     font-size: 125%;
 }
 
+/* Formating the code highlighting */
 code .keyword {
 	color: blue;	
 }
@@ -85,11 +81,11 @@ code .names {
 code .stringLiteral {
 	color: #46A346;
 }
-
 code .preprocessor{
         color: lightblue;
 }
 
+/* Media querries for mobile devices */
 @media (max-width: 600px) {
 	body{
 		width: 98%;
