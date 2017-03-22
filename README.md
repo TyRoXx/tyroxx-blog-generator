@@ -9,7 +9,7 @@
 * for Visual Studio, use the CMake GUI to generate your solution as usual and choose the right build directory
 * requires GCC version >= 4.9 or Visual Studio 2015
 
-# How to format the code
+## How to format the code
 * make sure that clang-format 3.7 is installed
   * http://releases.llvm.org/download.html#3.7.1
   * or run `sudo apt-get install clang-format-3.7`
@@ -17,3 +17,17 @@
 * Linux etc:
     * `make clang-format`
     * or `ninja clang-format` if you are using ninja
+
+# Changelog
+See a list of the most important changes that were made
+
+## Version 0
+* Multipage generation (currently just two)
+* Links between the two pages in some kind of menu
+* code snippets have code highlighting now
+* Add an external file for CSS file
+
+# Todo
+* See todos on the page itself (code formatting and execution)
+* More pages!!!
+

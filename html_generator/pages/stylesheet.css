@@ -19,27 +19,31 @@ li{
 	list-style: square;
 }
 /* Menu and footer defintions */
-menu a, footer a {
-	color: white;
-}
-menu a:visted {
+menu a, footer a, menu a:visited{
 	color: white;
 }
 menu, footer{
 	padding: 0;
 	width: 100%;
-	background-color: black;
 }
 menu ul, footer ul {
 	padding: 0;
 	margin: 0;
-	padding: 20px 0;
 	list-style: none;
 }
-menu li, footer li {
-	display: inline-block;
+menu ul li, footer ul li {
+        display: inline-block;
 	width: 33.33%;
+        height: 100%;
 	text-align: center;
+        background-color: black;
+}
+menu ul li p, footer ul li p{
+        padding: 20px 0;
+        margin: 0;
+}
+menu ul li:hover, footer ul li:hover {
+        background-color: grey;
 }
 footer {
 	margin-bottom: 1em;
@@ -58,7 +62,6 @@ footer {
     vertical-align: top;
     font-size: 125%;
 }
-
 .sourcecodeSnippet pre.lineNumbers {
     margin-right: 1em;
 	text-align: right;
@@ -70,12 +73,12 @@ footer {
 	width: 0;
 	overflow: auto none;
 }
-
 .inlineCodeSnippet {
     display: inline;
     font-size: 125%;
 }
 
+/* Formating the code highlighting */
 code .keyword {
 	color: blue;	
 }
@@ -85,7 +88,11 @@ code .names {
 code .stringLiteral {
 	color: #46A346;
 }
+code .preprocessor{
+        color: lightblue;
+}
 
+/* Media querries for mobile devices */
 @media (max-width: 600px) {
 	body{
 		width: 98%;
