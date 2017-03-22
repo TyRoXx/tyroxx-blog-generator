@@ -17,17 +17,3 @@
 * Linux etc:
     * `make clang-format`
     * or `ninja clang-format` if you are using ninja
-
-# Changelog
-See a list of the most important changes that were made
-
-## Version 0
-* Multipage generation (currently just two)
-* Links between the two pages in some kind of menu
-* code snippets have code highlighting now
-
-# Todo
-* Add an external file for CSS file (done)
-* See todos on the page itself (code formatting and execution)
-* More pages!!!
-* highlight preprocessor
