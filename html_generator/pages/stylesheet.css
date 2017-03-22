@@ -101,6 +101,9 @@ code .preprocessor{
 		margin: 1em auto;
 	}
 	menu ul, footer ul{
-		padding: .5em 0;
+                padding: 0;
 	}
+        menu{
+                margin-top: 0;
+        }
 }
