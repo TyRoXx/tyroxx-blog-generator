@@ -14,7 +14,6 @@ addons:
     packages:
     - g++-4.9
     - g++-5
-    - clang-format-3.7
     
 env:
 # - CPP=g++-5   GCC=gcc-5   BUILD_TYPE=Release CONAN="-s compiler.version=5.4 -s build_type=Release"
@@ -39,13 +38,6 @@ script:
  - pushd build
  - CXX=$CPP CC=$GCC conan install --build silicium --build ventura -s compiler=gcc $CONAN .. || exit 1
  - CXX=$CPP CC=$GCC cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE || exit 1
- - cmake --build . -- clang-format || exit 1
- - pushd ..
- - if [ -n "$(git status --porcelain)" ]; then
-     echo "the source code has not been formatted correctly";
-     exit 1;
-   fi
- - popd
  - cmake --build . -- -j2 || exit 1
  - pushd bin
  - ./tests || exit 1
