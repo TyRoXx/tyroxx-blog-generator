@@ -1,6 +1,6 @@
 #pragma once
-#include <silicium/html/tree.hpp>
 #include "tags.hpp"
+#include <silicium/html/tree.hpp>
 
 inline bool is_brace(char const c)
 {
@@ -234,7 +234,6 @@ inline auto render_code_raw(std::string code)
 			               case token_type::other:
 			               case token_type::brace:
 				               text(t.content).generate(sink);
-				               break;
 			               }
 			               i += t.content.size();
 		               }
