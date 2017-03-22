@@ -83,7 +83,7 @@ code .names {
 	color: purple;
 }
 code .stringLiteral {
-	color: #46A346;
+	color: darkred;
 }
 code .preprocessor{
         color: lightblue;
