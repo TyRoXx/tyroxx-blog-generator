@@ -181,33 +181,30 @@ inline auto render_code_raw(std::string code)
 				    .generate(sink);
 				break;
 
-			               case token_type::identifier:
-				               if (std::find(std::begin(keywords),
-				                             std::end(keywords),
-				                             t.content) != std::end(keywords))
-				               {
-					               tags::span(attribute("class", "keyword"),
-					                          text(t.content))
-					                   .generate(sink);
-					               break;
-				               }
-				               else
-				               {
-					               i += t.content.size();
-					               token next = find_next_token(i, code.end());
-					               if (next.type == token_type::double_colon)
-					               {
-						               tags::span(attribute("class", "names"),
-						                          text(t.content))
-						                   .generate(sink);
-					               }
-					               else
-					               {
-						               text(t.content).generate(sink);
-					               }
-					               t = next;
-					               goto token_switch;
-				               }
+			case token_type::identifier:
+				if (std::find(std::begin(keywords), std::end(keywords),
+				              t.content) != std::end(keywords))
+				{
+					tags::span(attribute("class", "keyword"), text(t.content))
+					    .generate(sink);
+					break;
+				}
+				else
+				{
+					i += t.content.size();
+					token next = find_next_token(i, code.end());
+					if (next.type == token_type::double_colon)
+					{
+						tags::span(attribute("class", "names"), text(t.content))
+						    .generate(sink);
+					}
+					else
+					{
+						text(t.content).generate(sink);
+					}
+					t = next;
+					goto token_switch;
+				}
 
 			case token_type::double_colon:
 				while (t.type == token_type::identifier ||
@@ -228,15 +225,15 @@ inline auto render_code_raw(std::string code)
 			i += t.content.size();
 		}
 	});
-			               case token_type::space:
-			               case token_type::other:
-			               case token_type::brace:
-				               text(t.content).generate(sink);
-				               break;
-			               }
-			               i += t.content.size();
-		               }
-		           });
+case token_type::space:
+case token_type::other:
+case token_type::brace:
+	text(t.content).generate(sink);
+	break;
+}
+i += t.content.size();
+}
+});
 }
 
 inline auto render_code(std::string code)
