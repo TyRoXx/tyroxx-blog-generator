@@ -205,14 +205,15 @@ namespace tags
 	}
 
 	//----------------href attrib----------------
-	inline auto href(std::string const &content)
+    inline auto href(std::string const &link)
 	{
-		return Si::html::attribute("href", content);
+        return Si::html::attribute("href", link);
 	}
 
-    inline auto href_external(std::string const &content)
+    // Opens the link in a new tab
+    inline auto href_new_tab(std::string const &link)
     {
-        return Si::html::attribute("href", content) + Si::html::attribute("target", "_blank");
+        return href(link) + Si::html::attribute("target", "_blank");
     }
 
     template <class Element, class Attributes>
