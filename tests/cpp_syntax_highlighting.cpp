@@ -132,5 +132,7 @@ BOOST_AUTO_TEST_CASE(render_code_raw_realistic_example)
 
 BOOST_AUTO_TEST_CASE(render_code_raw_include)
 {
-	check_code_rendering("#include <vector>\n", "#include &lt;vector&gt;\n");
+	check_code_rendering(
+	    "#include <vector>\n",
+	    "<span class=\"preprocessor\">#include &lt;vector&gt;</span>\n");
 }

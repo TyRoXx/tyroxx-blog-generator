@@ -13,7 +13,7 @@ enum class token_type
 	identifier,
 	string,
 	double_colon,
-    preprocessor,
+	preprocessor,
 	brace,
 	space,
 	eof,
@@ -33,7 +33,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 	{
 		return {"", token_type::eof};
 	}
-    // Detecting identifier
+	// Detecting identifier
 	if (isalnum(*begin))
 	{
 		return {std::string(begin, std::find_if(begin + 1, end,
@@ -44,7 +44,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 			                                    })),
 		        token_type::identifier};
 	}
-    // Detecting name spaces
+	// Detecting name spaces
 	if (*begin == ':')
 	{
 		if (begin + 1 == end)
@@ -57,7 +57,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		}
 		return {"::", token_type::double_colon};
 	}
-    // Detecting whitespaces
+	// Detecting whitespaces
 	if (!isprint(*begin))
 	{
 		return {std::string(begin, std::find_if(begin + 1, end,
@@ -67,12 +67,12 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 			                                    })),
 		        token_type::space};
 	}
-    //Detecting braces
+	// Detecting braces
 	if (is_brace(*begin))
 	{
 		return {std::string(begin, begin + 1), token_type::brace};
 	}
-    //Detecting escaped characters
+	// Detecting escaped characters
 	if (*begin == '"' || *begin == '\'')
 	{
 		char first = *begin;
@@ -98,12 +98,18 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		}
 		return {std::string(begin, end_index + 1), token_type::string};
 	}
-    //Detecting pre processor directives
-    if(*begin == '#'){
-        return {std::string(begin, std::find_if(begin +1, end, [](char c){
-                return c == '\n' || c == '\r' || c == '"';
-            })), token_type::preprocessor};
-    }
+	// Detecting pre processor directives
+	if (*begin == '#')
+	{
+		return {std::string(begin, std::find_if(begin + 1, end,
+		                                        [](char c)
+		                                        {
+			                                        return c == '\n' ||
+			                                               c == '\r' ||
+			                                               c == '"';
+			                                    })),
+		        token_type::preprocessor};
+	}
 	return {std::string(begin, std::find_if(begin + 1, end,
 	                                        [](char c)
 	                                        {
@@ -172,11 +178,11 @@ inline auto render_code_raw(std::string code)
 			               case token_type::eof:
 				               return;
 
-                           case token_type::preprocessor:
-                               tags::span(attribute("class", "preprocessor"),
-                                          text(t.content))
-                                   .generate(sink);
-                               break;
+			               case token_type::preprocessor:
+				               tags::span(attribute("class", "preprocessor"),
+				                          text(t.content))
+				                   .generate(sink);
+				               break;
 
 			               case token_type::string:
 				               tags::span(attribute("class", "stringLiteral"),
