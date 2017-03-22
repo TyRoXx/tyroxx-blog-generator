@@ -15,12 +15,8 @@
   * or run `sudo apt-get install clang-format-3.7`
 * Visual Studio: build the `clang-format` target
 * Linux etc:
-
-    $ make clang-format
-
-  or
-
-    $ ninja clang-format
+    * `make clang-format`
+    * or `ninja clang-format` if you are using ninja
 
 # Changelog
 See a list of the most important changes that were made
