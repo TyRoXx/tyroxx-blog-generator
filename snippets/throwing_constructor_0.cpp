@@ -1,3 +1,4 @@
+#define HALLO 1
 struct widget
 {
 	explicit widget(std::string const &important_file)

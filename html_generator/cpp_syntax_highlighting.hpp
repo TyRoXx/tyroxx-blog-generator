@@ -13,6 +13,7 @@ enum class token_type
 	identifier,
 	string,
 	double_colon,
+    preprocessor,
 	brace,
 	space,
 	eof,
@@ -93,6 +94,11 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		}
 		return {std::string(begin, end_index + 1), token_type::string};
 	}
+    if(*begin == '#'){
+        return {std::string(begin, std::find_if(begin +1, end, [](char c){
+                return c == '\n' || c == '\r';
+            })), token_type::preprocessor};
+    }
 	return {std::string(begin, std::find_if(begin + 1, end,
 	                                        [](char c)
 	                                        {
@@ -160,6 +166,12 @@ inline auto render_code_raw(std::string code)
 			               {
 			               case token_type::eof:
 				               return;
+
+                           case token_type::preprocessor:
+                               tags::span(attribute("class", "preprocessor"),
+                                          text(t.content))
+                                   .generate(sink);
+                               break;
 
 			               case token_type::string:
 				               tags::span(attribute("class", "stringLiteral"),
