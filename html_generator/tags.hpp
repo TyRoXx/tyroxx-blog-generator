@@ -235,7 +235,7 @@ namespace tags
 		    {
 			    if (protocol == "http://" || protocol == "https://")
 			    {
-                    tag("a", href_external(protocol + address_without_protocol),
+                    tag("a", href_new_tab(protocol + address_without_protocol),
 				        text(caption))
 				        .generate(sink);
 			    }
