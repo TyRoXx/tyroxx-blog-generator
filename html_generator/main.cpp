@@ -1,19 +1,19 @@
-#include <boost/program_options.hpp>
-#include <iostream>
-#include <ventura/open.hpp>
-#include <ventura/file_operations.hpp>
-#include <ventura/read_file.hpp>
-#include <silicium/sink/file_sink.hpp>
-#include <silicium/sink/throwing_sink.hpp>
-#include <silicium/html/tree.hpp>
+#include "cpp_syntax_highlighting.hpp"
 #include "tags.hpp"
+#include <beast/core/streambuf.hpp>
 #include <beast/http/read.hpp>
 #include <beast/http/string_body.hpp>
 #include <beast/http/write.hpp>
-#include <beast/core/streambuf.hpp>
-#include <ventura/read_file.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include "cpp_syntax_highlighting.hpp"
+#include <boost/program_options.hpp>
+#include <iostream>
+#include <silicium/html/tree.hpp>
+#include <silicium/sink/file_sink.hpp>
+#include <silicium/sink/throwing_sink.hpp>
+#include <ventura/file_operations.hpp>
+#include <ventura/open.hpp>
+#include <ventura/read_file.hpp>
+#include <ventura/read_file.hpp>
 
 namespace
 {
@@ -47,23 +47,21 @@ namespace
 	{
 		ventura::absolute_path const full_name = snippets_source_code / name;
 		Si::variant<std::vector<char>, boost::system::error_code,
-		            ventura::read_file_problem> read_result =
-		    ventura::read_file(ventura::safe_c_str(to_os_string(full_name)));
+		            ventura::read_file_problem>
+		    read_result = ventura::read_file(
+		        ventura::safe_c_str(to_os_string(full_name)));
 		std::vector<char> content;
 		Si::visit<void>(
 		    read_result,
-		    [&content](std::vector<char> &read_content)
-		    {
+		    [&content](std::vector<char> &read_content) {
 			    content = std::move(read_content);
 			},
-		    [&full_name](boost::system::error_code const error)
-		    {
+		    [&full_name](boost::system::error_code const error) {
 			    boost::throw_exception(std::runtime_error(
 			        "Could not read file " + to_utf8_string(full_name) + ": " +
 			        boost::lexical_cast<std::string>(error)));
 			},
-		    [&full_name](ventura::read_file_problem const problem)
-		    {
+		    [&full_name](ventura::read_file_problem const problem) {
 			    switch (problem)
 			    {
 			    case ventura::read_file_problem::file_too_large_for_memory:
@@ -136,35 +134,32 @@ namespace
 			site_title = "Unknown page";
 		}
 
-		auto page_content = dynamic(
-		    [
-			  &file_name,
-			  snippets_source_code = std::move(snippets_source_code)
-			](code_sink & sink)
-		    {
-			    if (file_name == "index.html")
-			    {
-				    auto drafts = tags::h2(text("Drafts")) +
+		auto page_content = dynamic([
+			&file_name, snippets_source_code = std::move(snippets_source_code)
+		](code_sink & sink) {
+			if (file_name == "index.html")
+			{
+				auto drafts = tags::h2(text("Drafts")) +
 #include "pages/input-validation.hpp"
-				                  +
+				              +
 #include "pages/throwing-constructor.hpp"
-				        ;
-				    drafts.generate(sink);
-			    }
-			    if (file_name == "articles.html")
-			    {
-				    tags::p("Sorry, there are no finished articles yet.")
-				        .generate(sink);
-			    }
-			    if (file_name == "contact.html")
-			    {
-				    tags::h2(text("Technical to do list")).generate(sink);
-				    tags::ul(tags::li(text("compile the code snippets")) +
-				             tags::li(text("[done] color the code snippets")) +
-				             tags::li(text("clang-format the code snippets")))
-				        .generate(sink);
-			    }
-			});
+				    ;
+				drafts.generate(sink);
+			}
+			if (file_name == "articles.html")
+			{
+				tags::p("Sorry, there are no finished articles yet.")
+				    .generate(sink);
+			}
+			if (file_name == "contact.html")
+			{
+				tags::h2(text("Technical to do list")).generate(sink);
+				tags::ul(tags::li(text("compile the code snippets")) +
+				         tags::li(text("[done] color the code snippets")) +
+				         tags::li(text("clang-format the code snippets")))
+				    .generate(sink);
+			}
+		});
 
 		auto head_content = tags::head(
 		    tag("meta", attribute("charset", "utf-8"), empty) +
@@ -245,8 +240,7 @@ namespace
 		beast::http::async_write(
 		    client->socket, client->response,
 		    [client, is_keep_alive,
-		     document_root](boost::system::error_code const ec)
-		    {
+		     document_root](boost::system::error_code const ec) {
 			    Si::throw_if_error(ec);
 			    if (is_keep_alive)
 			    {
@@ -271,23 +265,20 @@ namespace
 		Si::visit<void>(
 		    ventura::read_file(
 		        ventura::safe_c_str(ventura::to_os_string(served_document))),
-		    [&](std::vector<char> content)
-		    {
+		    [&](std::vector<char> content) {
 			    // TODO: avoid the copy of the content
 			    client->response.body.assign(content.begin(), content.end());
 			    client->response.reason = "OK";
 			    client->response.status = 200;
 			},
-		    [&](boost::system::error_code const ec)
-		    {
+		    [&](boost::system::error_code const ec) {
 			    std::cerr << "Could not read file " << served_document << ": "
 			              << ec << '\n';
 			    client->response.reason = "Internal Server Error";
 			    client->response.status = 500;
 			    client->response.body = client->response.reason;
 			},
-		    [&](ventura::read_file_problem const problem)
-		    {
+		    [&](ventura::read_file_problem const problem) {
 			    std::cerr << "Could not read file " << served_document
 			              << " due to problem " << static_cast<int>(problem)
 			              << '\n';
@@ -304,8 +295,7 @@ namespace
 	{
 		beast::http::async_read(
 		    client->socket, client->receive_buffer, client->request,
-		    [client, document_root](boost::system::error_code const ec)
-		    {
+		    [client, document_root](boost::system::error_code const ec) {
 			    Si::throw_if_error(ec);
 			    std::shared_ptr<file_client> const new_client =
 			        std::make_shared<file_client>(
@@ -349,8 +339,7 @@ namespace
 		    beast::streambuf());
 		acceptor.async_accept(client->socket,
 		                      [&acceptor, client, document_root](
-		                          boost::system::error_code const ec)
-		                      {
+		                          boost::system::error_code const ec) {
 			                      Si::throw_if_error(ec);
 			                      begin_accept(acceptor, document_root);
 			                      begin_serve(client, document_root);

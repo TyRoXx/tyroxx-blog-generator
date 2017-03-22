@@ -54,9 +54,8 @@ BOOST_AUTO_TEST_CASE(render_code_raw_identifier)
 
 BOOST_AUTO_TEST_CASE(render_code_raw_keyword)
 {
-	check_code_rendering(
-	    "const",
-        R"(<span class="keyword">const</span>)");
+	check_code_rendering("const",
+	                     R"(<span class="keyword">const</span>)");
 }
 
 BOOST_AUTO_TEST_CASE(render_code_raw_scoped_identifier)
@@ -102,8 +101,7 @@ BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
 {
 	BOOST_CHECK_EXCEPTION(
 	    check_code_rendering("\"abc\'", ""), std::invalid_argument,
-	    [](std::invalid_argument const &ex)
-	    {
+	    [](std::invalid_argument const &ex) {
 		    return (std::string("Number of quotes must be even") == ex.what());
 		});
 }
@@ -133,5 +131,7 @@ BOOST_AUTO_TEST_CASE(render_code_raw_realistic_example)
 
 BOOST_AUTO_TEST_CASE(render_code_raw_include)
 {
-    check_code_rendering("#include <vector>\n", "<span class=\"preprocessor\">#include &lt;vector&gt;</span>\n");
+	check_code_rendering(
+	    "#include <vector>\n",
+	    "<span class=\"preprocessor\">#include &lt;vector&gt;</span>\n");
 }

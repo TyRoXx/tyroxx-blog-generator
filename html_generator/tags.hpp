@@ -205,37 +205,36 @@ namespace tags
 	}
 
 	//----------------href attrib----------------
-    inline auto href(std::string const &link)
+	inline auto href(std::string const &link)
 	{
-        return Si::html::attribute("href", link);
+		return Si::html::attribute("href", link);
 	}
 
-    // Opens the link in a new tab
-    inline auto href_new_tab(std::string const &link)
-    {
-        return href(link) + Si::html::attribute("target", "_blank");
-    }
+	// Opens the link in a new tab
+	inline auto href_new_tab(std::string const &link)
+	{
+		return href(link) + Si::html::attribute("target", "_blank");
+	}
 
-    template <class Element, class Attributes>
-    inline auto a(Attributes &&attributes, Element &&content)
-    {
-        return Si::html::tag("a", std::forward<Attributes>(attributes),
-                             std::forward<Element>(content));
-    }
+	template <class Element, class Attributes>
+	inline auto a(Attributes &&attributes, Element &&content)
+	{
+		return Si::html::tag("a", std::forward<Attributes>(attributes),
+		                     std::forward<Element>(content));
+	}
 
 	// PSEUDO TAG: link (emulates the a-tag)
 	template <std::size_t N>
 	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N],
+	          char const (&address_without_protocol)[N],
 	          std::string const &caption)
 	{
 		using namespace Si::html;
 		return dynamic(
-		    [protocol, &address_without_protocol, caption](code_sink &sink)
-		    {
+		    [protocol, &address_without_protocol, caption](code_sink &sink) {
 			    if (protocol == "http://" || protocol == "https://")
 			    {
-                    tag("a", href_new_tab(protocol + address_without_protocol),
+				    tag("a", href_new_tab(protocol + address_without_protocol),
 				        text(caption))
 				        .generate(sink);
 			    }
@@ -250,7 +249,7 @@ namespace tags
 
 	template <std::size_t N>
 	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N])
+	          char const (&address_without_protocol)[N])
 	{
 		return link(protocol, address_without_protocol,
 		            address_without_protocol);
@@ -258,7 +257,7 @@ namespace tags
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)
 	template <std::size_t N>
-	auto anchor_attributes(char const(&name)[N])
+	auto anchor_attributes(char const (&name)[N])
 	{
 		using namespace Si::html;
 		return attribute("name", name) + href(std::string("#") + name);
