@@ -86,7 +86,7 @@ code .stringLiteral {
 	color: darkred;
 }
 code .preprocessor{
-        color: lightblue;
+    color: darkgreen;
 }
 
 /* Media querries for mobile devices */
