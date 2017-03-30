@@ -354,7 +354,7 @@ namespace
 	}
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
 	std::string output_option;
 	boost::uint16_t web_server_port = 0;
