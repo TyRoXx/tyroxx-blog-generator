@@ -1,5 +1,4 @@
 #include "cpp_syntax_highlighting.hpp"
-#include "tags.hpp"
 #include <beast/core/streambuf.hpp>
 #include <beast/http/read.hpp>
 #include <beast/http/string_body.hpp>
@@ -7,12 +6,9 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/program_options.hpp>
 #include <iostream>
-#include <silicium/html/tree.hpp>
 #include <silicium/sink/file_sink.hpp>
 #include <silicium/sink/throwing_sink.hpp>
 #include <ventura/file_operations.hpp>
-#include <ventura/open.hpp>
-#include <ventura/read_file.hpp>
 #include <ventura/read_file.hpp>
 
 namespace
