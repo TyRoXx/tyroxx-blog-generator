@@ -148,6 +148,13 @@ namespace tags
 	{
 		return Si::html::tag("tfoot", std::forward<Element>(content));
 	}
+	
+	//----------------TR tag----------------
+	template <class Element>
+	auto tr(Element &&content)
+	{
+		return Si::html::tag("tr", std::forward<Element>(content));
+	}
 
 	//----------------TD tag----------------
 	template <class Element>
