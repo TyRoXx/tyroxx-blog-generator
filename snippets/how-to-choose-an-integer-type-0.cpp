@@ -1,0 +1,1 @@
+void print_file_size(std::uint64_t size);

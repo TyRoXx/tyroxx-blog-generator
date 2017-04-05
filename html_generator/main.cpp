@@ -122,9 +122,7 @@ namespace
 		](code_sink & sink)
 		                            {
 			                            auto drafts =
-#include "pages/input-validation.hpp"
-			                                +
-#include "pages/throwing-constructor.hpp"
+#include "pages/how-to-choose-an-integer-type.hpp"
 			                                ;
 			                            drafts.generate(sink);
 			                        });

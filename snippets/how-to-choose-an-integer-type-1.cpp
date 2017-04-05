@@ -1,0 +1,11 @@
+void print_anything(char);
+void print_anything(signed char);
+void print_anything(unsigned char);
+void print_anything(short);
+void print_anything(int);
+void print_anything(long);
+void print_anything(long long);
+void print_anything(unsigned short);
+void print_anything(unsigned int);
+void print_anything(unsigned long);
+void print_anything(unsigned long long);
