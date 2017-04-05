@@ -114,53 +114,20 @@ namespace
 		Si::file_sink index_sink(index.get().handle);
 		using namespace Si::html;
 
-		std::string site_title;
-		if (file_name == "index.html")
-		{
-			site_title = "TyRoXx' blog";
-		}
-		else if (file_name == "contact.html")
-		{
-			site_title = "TyRoXx' contacts";
-		}
-		else if (file_name == "articles.html")
-		{
-			site_title = "List of articles";
-		}
-		else
-		{
-			site_title = "Unknown page";
-		}
+		static const std::string site_title = "TyRoXx' blog";
 
-		auto page_content = dynamic(
-		    [
-			  &file_name,
-			  snippets_source_code = std::move(snippets_source_code)
-			](code_sink & sink)
-		    {
-			    if (file_name == "index.html")
-			    {
-				    auto drafts = tags::h2(text("Drafts")) +
+		auto page_content = dynamic([
+			&file_name,
+			snippets_source_code = std::move(snippets_source_code)
+		](code_sink & sink)
+		                            {
+			                            auto drafts =
 #include "pages/input-validation.hpp"
-				                  +
+			                                +
 #include "pages/throwing-constructor.hpp"
-				        ;
-				    drafts.generate(sink);
-			    }
-			    if (file_name == "articles.html")
-			    {
-				    tags::p("Sorry, there are no finished articles yet.")
-				        .generate(sink);
-			    }
-			    if (file_name == "contact.html")
-			    {
-				    tags::h2(text("Technical to do list")).generate(sink);
-				    tags::ul(tags::li(text("compile the code snippets")) +
-				             tags::li(text("[done] color the code snippets")) +
-				             tags::li(text("clang-format the code snippets")))
-				        .generate(sink);
-			    }
-			});
+			                                ;
+			                            drafts.generate(sink);
+			                        });
 
 		auto head_content = tags::head(
 		    tag("meta", attribute("charset", "utf-8"), empty) +
@@ -172,11 +139,10 @@ namespace
 		    tag("link",
 		        tags::href("stylesheets.css") + attribute("rel", "stylesheet"),
 		        empty));
-		auto body_content = tags::body(
-#include "pages/menu.hpp"
-		    +tags::h1(text(site_title)) + std::move(page_content) +
+		auto body_content =
+		    tags::body(tags::h1(text(site_title)) + std::move(page_content) +
 #include "pages/footer.hpp"
-		    );
+		               );
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    tags::html(std::move(head_content) + std::move(body_content));
@@ -424,8 +390,7 @@ int main(int argc, const char **argv)
 	ventura::copy(
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
-	static const boost::string_ref files_to_generate[] = {
-	    "index.html", "contact.html", "articles.html"};
+	static const boost::string_ref files_to_generate[] = {"index.html"};
 	for (boost::string_ref const file : files_to_generate)
 	{
 		boost::system::error_code const ec = generate_all_html(
