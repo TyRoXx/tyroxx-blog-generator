@@ -137,37 +137,36 @@ BOOST_AUTO_TEST_CASE(render_code_raw_include)
 	    "<span class=\"preprocessor\">#include &lt;vector&gt;</span>\n");
 }
 
-BOOST_AUTO_TEST_CASE(render_an_empty comment)
+BOOST_AUTO_TEST_CASE(render_an_empty_comment)
 {
-	check_code_rendering(
-	    "code;//\n",
-	    "code;<span class=\"comment\">//</span>\n");
+	check_code_rendering("code;// \n",
+	                     "code;<span class=\"comment\">// </span>\n");
 }
 
 BOOST_AUTO_TEST_CASE(render_a_comment)
 {
-	check_code_rendering(
-	    "//Hello testing it\n",
-	    "<span class=\"comment\">//Hello testing it</span>\n");
+	check_code_rendering("//Hello testing it\n",
+	                     "<span class=\"comment\">//Hello testing it</span>\n");
 }
 
 BOOST_AUTO_TEST_CASE(render_an_empty_block_comment)
 {
-	check_code_rendering(
-	    "/**/\n",
-	    "<span class=\"comment\">/**/</span>\n");
+	check_code_rendering("/**/\n", "<span class=\"comment\">/**/</span>\n");
 }
 
 BOOST_AUTO_TEST_CASE(render_a_block_comment)
 {
 	check_code_rendering(
-	    "/*This is some test code and the bool should not be rendered as a keyword\nNeither should a line break confuse it*/\n",
-	    "<span class=\"comment\">/*This is some test code and the bool should not be rendered as a keyword\nNeither should a line break confuse it*/</span>\n");
+	    "/*This is some test code and the bool should not be rendered as a "
+	    "keyword\nNeither should a line break confuse it*/\n",
+	    "<span class=\"comment\">/*This is some test code and the bool should "
+	    "not be rendered as a keyword\nNeither should a line break confuse "
+	    "it*/</span>\n");
 }
 
 BOOST_AUTO_TEST_CASE(render_a_doc_comment)
 {
-	check_code_rendering(
-	    "/**Special documentation comment incoming*/\n",
-	    "<span class=\"comment\">/**Special documentation comment incoming*/</span>\n");
+	check_code_rendering("/**Special documentation comment incoming*/\n",
+	                     "<span class=\"comment\">/**Special documentation "
+	                     "comment incoming*/</span>\n");
 }
