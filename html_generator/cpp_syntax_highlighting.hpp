@@ -8,12 +8,17 @@ inline bool is_brace(char const c)
 	return std::find(braces.begin(), braces.end(), c) != braces.end();
 }
 
+inline bool is_lineend(char const c){
+	return c == '\n' || c == '\r';
+}
+
 enum class token_type
 {
 	identifier,
 	string,
 	double_colon,
 	preprocessor,
+	comment,
 	brace,
 	space,
 	eof,
@@ -104,11 +109,38 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		return {std::string(begin, std::find_if(begin + 1, end,
 		                                        [](char c)
 		                                        {
-			                                        return c == '\n' ||
-			                                               c == '\r' ||
-			                                               c == '"';
+			                                        return is_lineend(c) || c == '"';
 			                                    })),
 		        token_type::preprocessor};
+	}
+	// Detecting comments
+	if (*begin == '/' && begin + 1 != end)
+	{
+		char comment_type = *(begin + 1);
+		// Single line comments
+		if (comment_type == '/')
+		{
+			return {std::string(begin, std::find_if(begin + 1, end, is_lineend),
+			                    token_type::comment)};
+		}
+		// Multiple line comments
+		if (comment_type == '*')
+		{
+			bool end = true;
+			return {std::string(begin, std::find_if(begin + 1, end,
+			                                        [&end](char c)
+			                                        {
+				                                        if (end)
+				                                        {
+					                                        if (c == '/')
+					                                        {
+						                                        return true;
+					                                        }
+				                                        }
+				                                        end = (c == '*');
+				                                    }),
+			                    token_type::comment)};
+		}
 	}
 	return {std::string(begin, std::find_if(begin + 1, end,
 	                                        [](char c)
@@ -180,6 +212,12 @@ inline auto render_code_raw(std::string code)
 
 			               case token_type::preprocessor:
 				               tags::span(attribute("class", "preprocessor"),
+				                          text(t.content))
+				                   .generate(sink);
+				               break;
+
+			               case token_type::comment:
+				               tags::span(attribute("class", "comment"),
 				                          text(t.content))
 				                   .generate(sink);
 				               break;
