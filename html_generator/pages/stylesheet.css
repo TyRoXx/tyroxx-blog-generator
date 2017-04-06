@@ -18,7 +18,7 @@ body {
 li{
 	list-style: square;
 }
-/* Menu and footer defintions */
+/* Menu and footer definitions */
 menu a, footer a, menu a:visited{
 	color: white;
 }
@@ -75,7 +75,7 @@ footer {
     font-size: 125%;
 }
 
-/* Formating the code highlighting */
+/* Formatting the code highlighting */
 code .keyword {
 	color: blue;	
 }
@@ -93,21 +93,24 @@ code .comment{
     color: #666666;
 }
 
-/* Media querries for mobile devices */
+/* Media queries for mobile devices */
 @media (max-width: 600px) {
 	body{
-		width: 98%;
+		width: 95%;
 		font-size: 90%
 	}
+    body p{
+        width: 80%;
+    }
+    menu{
+        margin-top: 0;
+    }
+    menu ul, footer ul{
+        padding: 0;
+    }
 	menu ul li, footer ul li {
 		display: block;
 		width: 100%;
 		margin: 1em auto;
 	}
-	menu ul, footer ul{
-                padding: 0;
-	}
-        menu{
-                margin-top: 0;
-        }
 }
