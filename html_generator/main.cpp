@@ -15,8 +15,8 @@ namespace
 {
 	auto inline_code(std::string code)
 	{
-		return tags::div(tags::cl("inlineCodeSnippet"),
-		                 render_code(std::move(code)));
+		return tags::span(tags::cl("inlineCodeSnippet"),
+		                  render_code(std::move(code)));
 	}
 
 	template <class StringLike>
