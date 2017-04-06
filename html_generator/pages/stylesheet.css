@@ -98,7 +98,7 @@ code .comment{
 		width: 95%;
 		font-size: 90%
 	}
-    body p{
+    body > p{
         width: 90%;
         margin: auto;
         text-align: justify;
