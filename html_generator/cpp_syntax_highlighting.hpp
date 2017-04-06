@@ -8,7 +8,7 @@ inline bool is_brace(char const c)
 	return std::find(braces.begin(), braces.end(), c) != braces.end();
 }
 
-inline bool is_lineend(char const c)
+inline bool is_line_end(char const c)
 {
 	return c == '\n' || c == '\r';
 }
@@ -110,7 +110,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		return {std::string(begin, std::find_if(begin + 1, end,
 		                                        [](char c)
 		                                        {
-			                                        return is_lineend(c) ||
+			                                        return is_line_end(c) ||
 			                                               c == '"';
 			                                    })),
 		        token_type::preprocessor};
@@ -123,7 +123,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		if (comment_type == '/')
 		{
 			return {
-			    std::string(begin, std::find_if(begin + 1, end, is_lineend)),
+			    std::string(begin, std::find_if(begin + 1, end, is_line_end)),
 			    token_type::comment};
 		}
 		// Multiple line comments
@@ -151,7 +151,8 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 	                                        [](char c)
 	                                        {
 		                                        return isalnum(c) || c == '"' ||
-		                                               c == ':' || c == '\'';
+		                                               c == ':' || c == '\'' ||
+		                                               c == '/';
 		                                    })),
 	        token_type::other};
 }
