@@ -89,6 +89,10 @@ code .preprocessor{
     color: darkgreen;
 }
 
+code .comment{
+    color: #666666;
+}
+
 /* Media querries for mobile devices */
 @media (max-width: 600px) {
 	body{
