@@ -129,20 +129,22 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		// Multiple line comments
 		if (comment_type == '*')
 		{
-			bool end = true;
+			bool is_end = true;
 			return {std::string(begin, std::find_if(begin + 1, end,
-			                                        [&end](char c)
+			                                        [&is_end](char c)
 			                                        {
-				                                        if (end)
+				                                        if (is_end)
 				                                        {
 					                                        if (c == '/')
 					                                        {
 						                                        return true;
 					                                        }
 				                                        }
-				                                        end = (c == '*');
-				                                    }),
-			                    token_type::comment)};
+				                                        is_end = (c == '*');
+				                                        return false;
+				                                    }) +
+			                               1),
+			        token_type::comment};
 		}
 	}
 	return {std::string(begin, std::find_if(begin + 1, end,
