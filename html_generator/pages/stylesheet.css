@@ -6,10 +6,6 @@ pre, code{
     padding: 0;
     margin: 0;
 }
-
-br{
-	clear:both;
-}
 body {
 	width: 90%;
 	margin: auto;
@@ -17,6 +13,9 @@ body {
 }
 li{
 	list-style: square;
+}
+p{
+    line-height: 1.25;
 }
 /* Menu and footer definitions */
 menu a, footer a, menu a:visited{
@@ -100,7 +99,9 @@ code .comment{
 		font-size: 90%
 	}
     body p{
-        width: 80%;
+        width: 90%;
+        margin: auto;
+        text-align: justify;
     }
     menu{
         margin-top: 0;
