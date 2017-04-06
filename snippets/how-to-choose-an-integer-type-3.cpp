@@ -7,6 +7,6 @@ std::vector<char> c_str_to_vector(char const *c_str)
 	// size_t?
 	// WTF What if the int is negative?
 	// WTF Will this fail safely with bad_alloc or will worse things happen?
-	std::vector<char> v(c_str, length);
+	std::vector<char> v(c_str, c_str + length);
 	return v;
 }
