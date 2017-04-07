@@ -1,21 +1,25 @@
-compile(
-    "#How to choose an integer type\n"
-    "(created 2017-04-05, updated 2017-04-05)\n"
-    "Prefer portable types like `std::uint32_t` over the types without an "
-    "explicit range. Use `int`, `long`, `long long`"
-    "only if you have a reason to use exactly these and not the portable ones. "
-    "C++ is different from Java and C#: `int` etc are not the same size and "
-    "range on every platform. This makes "
-    "them hard to use even for C++ experts. They are neither necessary nor "
-    "sufficient for most practical situations.\n"
-    "In most cases you already know the expected range of values. So why not "
-    "use the right integer type for this instead instead of "
-    "cargo-culting it?\n"
-    "If you know that you are dealing with 64-bit file sizes, document "
-    "this assumption in an unambiguous way. There is no reason for "
-    "using `int` or `long long` in this case. Using the wrong type leads to "
-    "unportable code and "
-    "misunderstandings.") +
+tags::h2(text("#How to choose an integer type")) +
+    compile(
+        "(created 2017-04-05, updated 2017-04-05)\n"
+        "Prefer portable types like `std::uint32_t` over the types without an "
+        "explicit range. Use `int`, `long`, `long long`"
+        "only if you have a reason to use exactly these and not the portable "
+        "ones. "
+        "C++ is different from Java and C#: `int` etc are not the same size "
+        "and "
+        "range on every platform. This makes "
+        "them hard to use even for C++ experts. They are neither necessary nor "
+        "sufficient for most practical situations.\n"
+        "In most cases you already know the expected range of values. So why "
+        "not "
+        "use the right integer type for this instead instead of "
+        "cargo-culting it?\n"
+        "If you know that you are dealing with 64-bit file sizes, document "
+        "this assumption in an unambiguous way. There is no reason for "
+        "using `int` or `long long` in this case. Using the wrong type leads "
+        "to "
+        "unportable code and "
+        "misunderstandings.") +
     snippet_from_file(
         snippets_source_code,
         ventura::relative_path("how-to-choose-an-integer-type-0.cpp")) +

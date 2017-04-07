@@ -16,20 +16,16 @@ namespace
 	}
 }
 
-BOOST_AUTO_TEST_CASE(render_heading)
-{
-	check_code_rendering("#This is a heading\n", "<h2>This is a heading</h2>");
-}
-
 BOOST_AUTO_TEST_CASE(render_text)
 {
-	check_code_rendering("This is normal text\n", "<p>This is normal text</p>");
+	check_code_rendering("This is normal text", "<p>This is normal text</p>");
 }
 
 BOOST_AUTO_TEST_CASE(render_inline_code)
 {
-	check_code_rendering("Code: `int i = 0;`",
-	                     "<p>Code: </p><span "
-	                     "class=\"inlineCodeSnippet\"><code><span "
-	                     "class=\"keyword\">int</span> i = 0;</code></span>");
+	check_code_rendering(
+	    "Code: `int i = 0;`",
+	    "<p>Code: <span "
+	    "class=\"inlineCodeSnippet\"><code><span "
+	    "class=\"keyword\">int</span> i = 0;</code></span></p>");
 }

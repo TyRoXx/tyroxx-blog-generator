@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include "cpp_syntax_highlighting.hpp"
 #include "tags.hpp"
@@ -8,7 +9,6 @@ enum class markdown_types
 {
 	eof,
 	text,
-	heading,
 	inline_code
 };
 
@@ -19,18 +19,19 @@ struct markdown_token
 };
 
 template <class RandomAccessIterator>
+std::string find_next_paragraph(RandomAccessIterator begin,
+                                RandomAccessIterator end)
+{
+	return std::string(begin, std::find_if(begin + 1, end, is_line_end));
+}
+
+template <class RandomAccessIterator>
 markdown_token find_next_mark_down_token(RandomAccessIterator &begin,
                                          RandomAccessIterator end)
 {
 	if (begin == end)
 	{
 		return {"", markdown_types::eof};
-	}
-	if (*begin == '#')
-	{
-		begin += 1;
-		return {std::string(begin, std::find_if(begin + 1, end, is_line_end)),
-		        markdown_types::heading};
 	}
 	if (*begin == '`')
 	{
@@ -42,11 +43,16 @@ markdown_token find_next_mark_down_token(RandomAccessIterator &begin,
 			                                    })),
 		        markdown_types::inline_code};
 	}
-	return {std::string(begin, std::find_if(begin + 1, end, is_line_end)),
+	return {std::string(begin, std::find_if(begin + 1, end,
+	                                        [](char c)
+	                                        {
+		                                        return c == '`';
+
+		                                    })),
 	        markdown_types::text};
 }
 
-auto compile(std::string source)
+auto compile_paragraph(std::string source)
 {
 	return Si::html::dynamic([source =
 	                              std::move(source)](Si::html::code_sink & sink)
@@ -61,10 +67,6 @@ auto compile(std::string source)
 			                         {
 			                         case markdown_types::eof:
 				                         return;
-			                         case markdown_types::heading:
-				                         tags::h2(Si::html::text(token.content)).generate(sink);
-				                         i += 1;
-				                         break;
 			                         case markdown_types::inline_code:
 				                         inline_code(token.content)
 				                             .generate(sink);
@@ -74,11 +76,35 @@ auto compile(std::string source)
 				                         if (!(token.content.size() == 1 &&
 				                               is_line_end(token.content[0])))
 				                         {
-					                         Si::html::tag("p", compile(token.content))
+					                         Si::html::text(token.content)
 					                             .generate(sink);
 				                         }
 			                         }
 			                         i += token.content.size();
 		                         }
+		                     });
+}
+
+auto compile(std::string source)
+{
+	return Si::html::dynamic([source =
+	                              std::move(source)](Si::html::code_sink & sink)
+	                         {
+		                         auto i = source.begin();
+		                         for (;;)
+		                         {
+			                         std::string paragraph =
+			                             find_next_paragraph(i, source.end());
+			                         if (paragraph.size() == 0)
+			                         {
+				                         return;
+			                         }
+
+			                         Si::html::tag("p",
+			                                       compile_paragraph(paragraph))
+			                             .generate(sink);
+			                         i += paragraph.size();
+		                         }
+
 		                     });
 }
