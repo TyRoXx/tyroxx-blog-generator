@@ -15,7 +15,7 @@ li{
 	list-style: square;
 }
 p{
-    line-height: 1.25;
+    line-height: 1.5;
 }
 /* Menu and footer definitions */
 menu a, footer a, menu a:visited{
@@ -96,12 +96,11 @@ code .comment{
 @media (max-width: 600px) {
 	body{
 		width: 95%;
-		font-size: 90%
+		font-size: 100%
 	}
     body > p{
-        width: 90%;
+        width: 95%;
         margin: auto;
-        text-align: justify;
     }
     menu{
         margin-top: 0;
