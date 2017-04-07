@@ -1,4 +1,4 @@
-std::string s = "#1!How to choose an integer type\n" +
+std::string s = "# How to choose an integer type\n" +
                 "(created 2017-04-05, updated 2017-04-05)\n" +
                 "Prefer portable types like `std::uint32_t` over the types without an explicit range. Use `int`, `long`, `long long`"
                         "only if you have a reason to use exactly these and not the portable ones. C++ is different from Java and C#: `int` etc are not the same size and range on every platform. This makes "
@@ -28,6 +28,7 @@ std::string s = "#1!How to choose an integer type\n" +
 
 enum class markdown_types {
     text,
+    heading,
     inline_code,
     snippet
 };
@@ -41,6 +42,12 @@ template<class RandomAccessIterator>
 token find_next_token(RandomAccessIterator begin, RandomAccessIterator end) {
     if (begin == end) {
         return {"", token_type::text};
+    }
+    if (*begin == '#') {
+        return {std::string(begin, std::find_if(begin + 1, end,
+                                                [](char c) {
+                                                    return c == '\n' || c == '\r';
+                                                })), markdown_types:heading};
     }
     if (*begin == '`') {
         return {std::string(begin, std::find_if(begin + 1, end,
@@ -60,10 +67,15 @@ std::string compile(std::string source) {
     while (i != code.end()) {
         markdown_token token = find_next_token(i, source);
         switch (token.type) {
+            case markdown_types::heading:
+                tag::h1(token.content);
+                break;
             case markdown_types::inline_code:
                 inline_code(token.content);
+                break;
             case markdown_types::snippet:
                 snippet_from_file(ventura::relative_path(token.content));
+                break;
             case markdown_types::text:
                 tags::p(token.content);
         }
