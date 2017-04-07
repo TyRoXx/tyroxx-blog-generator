@@ -42,12 +42,7 @@ markdown_token find_next_mark_down_token(RandomAccessIterator &begin,
 			                                    })),
 		        markdown_types::inline_code};
 	}
-	return {std::string(begin, std::find_if(begin + 1, end,
-	                                        [](char c)
-	                                        {
-		                                        return c == '`' ||
-		                                               is_line_end(c);
-		                                    })),
+	return {std::string(begin, std::find_if(begin + 1, end, is_line_end)),
 	        markdown_types::text};
 }
 
@@ -67,8 +62,8 @@ auto compile(std::string source)
 			                         case markdown_types::eof:
 				                         return;
 			                         case markdown_types::heading:
-				                         tags::h1(Si::html::text(token.content))
-				                             .generate(sink);
+				                         tags::h2(Si::html::text(token.content)).generate(sink);
+				                         i += 1;
 				                         break;
 			                         case markdown_types::inline_code:
 				                         inline_code(token.content)
@@ -76,9 +71,10 @@ auto compile(std::string source)
 				                         i += 1;
 				                         break;
 			                         case markdown_types::text:
-				                         if (!is_line_end(token.content[0]))
+				                         if (!(token.content.size() == 1 &&
+				                               is_line_end(token.content[0])))
 				                         {
-					                         tags::p(token.content)
+					                         Si::html::tag("p", compile(token.content))
 					                             .generate(sink);
 				                         }
 			                         }

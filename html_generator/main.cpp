@@ -11,6 +11,10 @@
 #include <ventura/file_operations.hpp>
 #include <ventura/read_file.hpp>
 #include "snippets.h"
+#include <ventura/relative_path.hpp>
+#include <ventura/absolute_path.hpp>
+#include <html_generator/blog_lang.hpp>
+#include <html_generator/snippets.h>
 
 namespace
 {

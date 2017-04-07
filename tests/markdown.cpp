@@ -18,7 +18,7 @@ namespace
 
 BOOST_AUTO_TEST_CASE(render_heading)
 {
-	check_code_rendering("#This is a heading\n", "<h1>This is a heading</h1>");
+	check_code_rendering("#This is a heading\n", "<h2>This is a heading</h2>");
 }
 
 BOOST_AUTO_TEST_CASE(render_text)
