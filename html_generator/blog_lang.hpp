@@ -22,6 +22,10 @@ template <class RandomAccessIterator>
 std::string find_next_paragraph(RandomAccessIterator begin,
                                 RandomAccessIterator end)
 {
+	if (begin == end)
+	{
+		return "";
+	}
 	return std::string(begin, std::find_if(begin + 1, end, is_line_end));
 }
 
