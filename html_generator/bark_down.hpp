@@ -26,7 +26,15 @@ std::string find_next_paragraph(RandomAccessIterator begin,
 	{
 		return "";
 	}
-	return std::string(begin, std::find_if(begin + 1, end, is_line_end));
+	bool is_new_line = false;
+	return std::string(begin,
+	                   std::find_if(begin + 1, end, [&is_new_line](char c)
+	                                {
+		                                if (is_new_line && is_line_end(c))
+			                                return true;
+		                                is_new_line = is_line_end(c);
+		                                return false;
+		                            }));
 }
 
 template <class RandomAccessIterator>

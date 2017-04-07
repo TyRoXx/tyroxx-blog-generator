@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <silicium/success.hpp>
 #include <silicium/sink/iterator_sink.hpp>
-#include "../html_generator/blog_lang.hpp"
+#include "html_generator/bark_down.hpp"
 
 namespace
 {
