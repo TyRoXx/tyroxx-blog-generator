@@ -7,7 +7,7 @@ pre, code{
     margin: 0;
 }
 body {
-	width: 90%;
+	max-width: 37em;
 	margin: auto;
 	font-family: sans-serif;
 }
