@@ -1,0 +1,28 @@
+<h1> How to choose an integer type</h1>
+    <span class="inlineCodeSnippet"><code><span class="names">std</span>
+    <span class="names">::</span><span class="names">uint32_t</span></code></span>
+
+
+
+    <span class="inlineCodeSnippet"><code> over the types without an <span
+        class="keyword">explicit</span> range. Use </code></span><span class="inlineCodeSnippet"><code><span
+        class="keyword">int</span></code></span><span class="inlineCodeSnippet"><code>, </code></span><span
+        class="inlineCodeSnippet"><code><span class="keyword">long</span></code></span><span
+        class="inlineCodeSnippet"><code>, </code></span><span class="inlineCodeSnippet"><code><span
+        class="keyword">long</span> <span class="keyword">long</span></code></span><span
+        class="inlineCodeSnippet"><code>only <span
+        class="keyword">if</span> you have a reason to use exactly these <span class="keyword">and</span> <span
+        class="keyword">not</span> the portable ones. C++ is different from Java <span class="keyword">and</span> C<span
+        class="preprocessor">#: </span></code></span><span class="inlineCodeSnippet"><code><span
+        class="keyword">int</span></code></span><span class="inlineCodeSnippet"><code> etc are <span
+        class="keyword">not</span> the same size <span class="keyword">and</span> range on every platform. This makes them hard to use even <span
+        class="keyword">for</span> C++ experts. They are neither necessary nor sufficient <span
+        class="keyword">for</span> most practical situations.
+In most cases you already know the expected range of values. So why <span class="keyword">not</span> use the right integer type <span
+            class="keyword">for</span> <span class="keyword">this</span> instead instead of cargo-culting it?
+If you know that you are dealing with 64-bit file sizes, document <span class="keyword">this</span> assumption in an unambiguous way. There is no reason <span
+            class="keyword">for</span> <span class="keyword">using</span> </code></span><span class="inlineCodeSnippet"><code><span
+        class="keyword">int</span></code></span><span class="inlineCodeSnippet"><code> <span class="keyword">or</span> </code></span>
+<span class="inlineCodeSnippet"><code><span class="keyword">long</span> <span class="keyword">long</span></code></span>
+<span class="inlineCodeSnippet"><code> in <span class="keyword">this</span> <span class="keyword">case</span>. Using the wrong type leads to unportable code <span
+        class="keyword">and</span> misunderstandings.</code></span>

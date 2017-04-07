@@ -39,6 +39,7 @@ std::string s = "# How to choose an integer type\n"
                 "Much better, isn't it? Is it really too much to ask for using the right integer types?";
 */
 enum class markdown_types {
+    eof,
     text,
     heading,
     inline_code,
@@ -53,16 +54,16 @@ struct markdown_token {
 template<class RandomAccessIterator>
 markdown_token find_next_mark_down_token(RandomAccessIterator begin, RandomAccessIterator end) {
     if (begin == end) {
-        return {"", markdown_types::text};
+        return {"", markdown_types::eof};
     }
     if (*begin == '#') {
-        return {std::string(begin, std::find_if(begin + 1, end,
+        return {std::string(begin + 1, std::find_if(begin + 1, end,
                                                 [](char c) {
                                                     return c == '\n' || c == '\r';
                                                 })), markdown_types::heading};
     }
     if (*begin == '`') {
-        return {std::string(begin, std::find_if(begin + 1, end,
+        return {std::string(begin + 1, std::find_if(begin + 1, end,
                                                 [](char c) {
                                                     return c == '`';
                                                 })), markdown_types::inline_code};
@@ -77,14 +78,16 @@ markdown_token find_next_mark_down_token(RandomAccessIterator begin, RandomAcces
 auto compile(std::string source) {
     return Si::html::dynamic([source = std::move(source)](Si::html::code_sink &sink) {
         auto i = source.begin();
-        while (i != source.end()) {
+        for (;;){
             markdown_token token = find_next_mark_down_token(i, source.end());
             switch (token.type) {
+                case markdown_types::eof:
+                    return;
                 case markdown_types::heading:
-                    tags::h1(token.content).generate(sink);
+                    tags::h1(Si::html::text(token.content)).generate(sink);
                     break;
                 case markdown_types::inline_code:
-                    inline_code(token.content).generade(sink);
+                    inline_code(token.content).generate(sink);
                     break;
                 case markdown_types::snippet:
                     snippet_from_file(snippets_source_code, ventura::relative_path(token.content));
