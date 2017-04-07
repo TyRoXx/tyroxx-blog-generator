@@ -1,3 +1,7 @@
+#include <boost/lexical_cast.hpp>
+#include <silicium/variant.hpp>
+#include <ventura/read_file.hpp>
+
 auto inline_code(std::string code)
 {
     return tags::span(tags::cl("inlineCodeSnippet"),
