@@ -1,3 +1,14 @@
+#include <string>
+#include <ventura/relative_path.hpp>
+#include <ventura/absolute_path.hpp>
+#include "cpp_syntax_highlighting.hpp"
+#include "snippets.h"
+#include "tags.hpp"
+
+ventura::absolute_path repo = *ventura::parent(
+        *ventura::parent(*ventura::absolute_path::create(__FILE__)));
+ventura::absolute_path snippets_source_code = repo / ventura::relative_path("snippets");
+
 std::string s = "# How to choose an integer type\n" +
                 "(created 2017-04-05, updated 2017-04-05)\n" +
                 "Prefer portable types like `std::uint32_t` over the types without an explicit range. Use `int`, `long`, `long long`"
@@ -39,21 +50,21 @@ struct markdown_token {
 };
 
 template<class RandomAccessIterator>
-token find_next_token(RandomAccessIterator begin, RandomAccessIterator end) {
+markdown_token find_next_mark_down_token(RandomAccessIterator begin, RandomAccessIterator end) {
     if (begin == end) {
-        return {"", token_type::text};
+        return {"", markdown_types::text};
     }
     if (*begin == '#') {
         return {std::string(begin, std::find_if(begin + 1, end,
                                                 [](char c) {
                                                     return c == '\n' || c == '\r';
-                                                })), markdown_types:heading};
+                                                })), markdown_types::heading};
     }
     if (*begin == '`') {
         return {std::string(begin, std::find_if(begin + 1, end,
                                                 [](char c) {
                                                     return c == '`';
-                                                })), markdown_types:inline_code};
+                                                })), markdown_types::inline_code};
     }
     return {std::string(begin, std::find_if(begin + 1, end,
                                             [](char c) {
@@ -62,23 +73,25 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end) {
             markdown_types::text};
 }
 
-std::string compile(std::string source) {
-    auto i = code.begin();
-    while (i != code.end()) {
-        markdown_token token = find_next_token(i, source);
-        switch (token.type) {
-            case markdown_types::heading:
-                tag::h1(token.content);
-                break;
-            case markdown_types::inline_code:
-                inline_code(token.content);
-                break;
-            case markdown_types::snippet:
-                snippet_from_file(ventura::relative_path(token.content));
-                break;
-            case markdown_types::text:
-                tags::p(token.content);
+auto compile(std::string source) {
+    return Si::html::dynamic([code = std::move(source)](Si::html::code_sink &sink) {
+        auto i = source.begin();
+        while (i != source.end()) {
+            markdown_token token = find_next_mark_down_token(i, source.end());
+            switch (token.type) {
+                case markdown_types::heading:
+                    tags::h1(token.content).generate(sink);
+                    break;
+                case markdown_types::inline_code:
+                    inline_code(token.content).generate(sink);
+                    break;
+                case markdown_types::snippet:
+                    snippet_from_file(snippets_source_code, ventura::relative_path(token.content));
+                    break;
+                case markdown_types::text:
+                    tags::p(token.content);
+            }
+            i += token.content.size();
         }
-        i += token.content.size();
-    }
+    });
 }
