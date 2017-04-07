@@ -15,7 +15,6 @@
 namespace
 {
 
-
 	boost::system::error_code
 	generate_all_html(ventura::absolute_path snippets_source_code,
 	                  ventura::absolute_path const &existing_output_root,
