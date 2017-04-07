@@ -10,16 +10,16 @@ ventura::absolute_path repo = *ventura::parent(
 ventura::absolute_path snippets_source_code = repo / ventura::relative_path("snippets");
 
 std::string s = "# How to choose an integer type\n"
-                "(created 2017-04-05, updated 2017-04-05)\n"
-                "Prefer portable types like `std::uint32_t` over the types without an explicit range. Use `int`, `long`, `long long`"
-                        "only if you have a reason to use exactly these and not the portable ones. C++ is different from Java and C#: `int` etc are not the same size and range on every platform. This makes "
-                        "them hard to use even for C++ experts. They are neither necessary nor sufficient for most practical situations.\n"
-                "In most cases you already know the expected range of values. So why not use the right integer type for this instead instead of "
-                        "cargo-culting it?\n"
-                "If you know that you are dealing with 64-bit file sizes, document "
-                        "this assumption in an unambiguous way. There is no reason for "
-                        "using `int` or `long long` in this case. Using the wrong type leads to unportable code and "
-                        "misunderstandings.";
+        "(created 2017-04-05, updated 2017-04-05)\n"
+        "Prefer portable types like `std::uint32_t` over the types without an explicit range. Use `int`, `long`, `long long`"
+        "only if you have a reason to use exactly these and not the portable ones. C++ is different from Java and C#: `int` etc are not the same size and range on every platform. This makes "
+        "them hard to use even for C++ experts. They are neither necessary nor sufficient for most practical situations.\n"
+        "In most cases you already know the expected range of values. So why not use the right integer type for this instead instead of "
+        "cargo-culting it?\n"
+        "If you know that you are dealing with 64-bit file sizes, document "
+        "this assumption in an unambiguous way. There is no reason for "
+        "using `int` or `long long` in this case. Using the wrong type leads to unportable code and "
+        "misunderstandings.";
 /*
                 snippet_from_file(snippets_source_code, ventura::relative_path("how-to-choose-an-integer-type-0.cpp")) +
                 "One of the few valid use cases for the built-in types is overloading a function for all integer types that exist:" +
@@ -52,25 +52,24 @@ struct markdown_token {
 };
 
 template<class RandomAccessIterator>
-markdown_token find_next_mark_down_token(RandomAccessIterator begin, RandomAccessIterator end) {
+markdown_token find_next_mark_down_token(RandomAccessIterator& begin, RandomAccessIterator end) {
     if (begin == end) {
         return {"", markdown_types::eof};
     }
     if (*begin == '#') {
-        return {std::string(begin + 1, std::find_if(begin + 1, end,
-                                                [](char c) {
-                                                    return c == '\n' || c == '\r';
-                                                })), markdown_types::heading};
+        begin += 1;
+        return {std::string(begin, std::find_if(begin + 1, end, is_line_end)), markdown_types::heading};
     }
     if (*begin == '`') {
-        return {std::string(begin + 1, std::find_if(begin + 1, end,
-                                                [](char c) {
-                                                    return c == '`';
-                                                })), markdown_types::inline_code};
+        begin += 1;
+        return {std::string(begin, std::find_if(begin + 1, end,
+                                                    [](char c) {
+                                                        return c == '`';
+                                                    })), markdown_types::inline_code};
     }
     return {std::string(begin, std::find_if(begin + 1, end,
                                             [](char c) {
-                                                return c == '`';
+                                                return c == '`' || is_line_end(c);
                                             })),
             markdown_types::text};
 }
@@ -78,7 +77,7 @@ markdown_token find_next_mark_down_token(RandomAccessIterator begin, RandomAcces
 auto compile(std::string source) {
     return Si::html::dynamic([source = std::move(source)](Si::html::code_sink &sink) {
         auto i = source.begin();
-        for (;;){
+        for (;;) {
             markdown_token token = find_next_mark_down_token(i, source.end());
             switch (token.type) {
                 case markdown_types::eof:
@@ -88,12 +87,15 @@ auto compile(std::string source) {
                     break;
                 case markdown_types::inline_code:
                     inline_code(token.content).generate(sink);
+                    i+=1;
                     break;
                 case markdown_types::snippet:
                     snippet_from_file(snippets_source_code, ventura::relative_path(token.content));
                     break;
                 case markdown_types::text:
-                    tags::p(token.content).generate(sink);
+                    if(! is_line_end(token.content[0])){
+                        tags::p(token.content).generate(sink);
+                    }
             }
             i += token.content.size();
         }
