@@ -1,3 +1,4 @@
+#pragma once
 #include <boost/lexical_cast.hpp>
 #include <silicium/variant.hpp>
 #include <ventura/read_file.hpp>
