@@ -89,7 +89,7 @@ code .preprocessor{
 }
 
 code .comment{
-    color: #666666;
+    color: darkgreen;
 }
 
 /* Media queries for mobile devices */
