@@ -93,7 +93,7 @@ auto compile(std::string source) {
                     snippet_from_file(snippets_source_code, ventura::relative_path(token.content));
                     break;
                 case markdown_types::text:
-                    tags::p(token.content);
+                    tags::p(token.content).generate(sink);
             }
             i += token.content.size();
         }
