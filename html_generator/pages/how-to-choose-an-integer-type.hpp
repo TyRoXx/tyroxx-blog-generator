@@ -32,8 +32,8 @@ They are used when dealing with memory on the current machine. `int` cannot stor
 machines. `size_t` can. Use `size_t`. `ptrdiff_t` is for differences between memory addresses. It is signed because a
 difference can be negative. `uintptr_t` is for manipulating pointers on the bit level. If you did not know about `uintptr_t`
 before reading this article, chances are you won't need this type any soon. `size_t` and `ptrdiff_t` are two of the most
-important types in C++ you have to know and make use of. This is a very small function how it would be written by someone w
-ho does not waste a single thought on choosing the right type.)") +
+important types in C++ you have to know and make use of. This is a very small function how it would be written by someone
+who does not waste a single thought on choosing the right type.)") +
     snippet_from_file(
         snippets_source_code,
         ventura::relative_path("how-to-choose-an-integer-type-2.cpp")) +
