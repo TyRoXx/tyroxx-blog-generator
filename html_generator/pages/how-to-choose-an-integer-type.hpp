@@ -32,9 +32,9 @@ They are used when dealing with memory on the current machine. `int` cannot stor
 machines. `size_t` can. Use `size_t`.)") +
     tags::table(
         header_row(Si::html::text("Command"), Si::html::text("Usage")) +
-        row(compile("`ptrdiff_t`"),
+        row(inline_code("ptrdiff_t"),
             Si::html::text("signed difference between memory addresses")) +
-        row(compile("`uintptr_t`"),
+        row(inline_code("uintptr_t"),
             Si::html::text("manipulating pointers on the bit level"))) +
     compile(R"(If you did not know about `uintptr_t`
 before reading this article, chances are you won't need this type any soon. `size_t` and `ptrdiff_t` are two of the most
