@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "cpp_syntax_highlighting.hpp"
-#include "tags.hpp"
-#include "snippets.h"
+#include "html_generator/cpp_syntax_highlighting.hpp"
+#include "html_generator/tags.hpp"
+#include "html_generator/snippets.h"
 
 enum class markdown_types
 {
