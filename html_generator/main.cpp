@@ -13,8 +13,9 @@
 #include "snippets.h"
 #include <ventura/relative_path.hpp>
 #include <ventura/absolute_path.hpp>
-#include <html_generator/bark_down.hpp>
+#include <html_generator/tools/bark_down.hpp>
 #include <html_generator/snippets.h>
+#include "html_generator/tools/table.hpp"
 
 namespace
 {
