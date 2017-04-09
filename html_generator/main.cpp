@@ -1,4 +1,3 @@
-#include "html_generator/tools/cpp_syntax_highlighting.hpp"
 #include <beast/core/streambuf.hpp>
 #include <beast/http/read.hpp>
 #include <beast/http/string_body.hpp>
@@ -10,8 +9,7 @@
 #include <silicium/sink/throwing_sink.hpp>
 #include <ventura/file_operations.hpp>
 #include <ventura/read_file.hpp>
-#include <html_generator/tools/table.hpp>
-#include <html_generator/tools/bark_down.hpp>
+#include <html_generator/tools/all.hpp>
 
 namespace
 {
