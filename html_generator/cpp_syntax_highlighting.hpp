@@ -1,6 +1,5 @@
 #pragma once
 #include "tags.hpp"
-#include <silicium/html/tree.hpp>
 
 inline bool is_brace(char const c)
 {

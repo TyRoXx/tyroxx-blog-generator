@@ -10,9 +10,8 @@
 #include <silicium/sink/throwing_sink.hpp>
 #include <ventura/file_operations.hpp>
 #include <ventura/read_file.hpp>
-#include "snippets.h"
+#include <html_generator/tools/table.hpp>
 #include <html_generator/tools/bark_down.hpp>
-#include "html_generator/tools/table.hpp"
 
 namespace
 {

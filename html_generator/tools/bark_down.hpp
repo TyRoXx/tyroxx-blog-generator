@@ -2,7 +2,6 @@
 
 #include <string>
 #include "html_generator/cpp_syntax_highlighting.hpp"
-#include "html_generator/tags.hpp"
 #include "html_generator/snippets.h"
 
 enum class markdown_types
