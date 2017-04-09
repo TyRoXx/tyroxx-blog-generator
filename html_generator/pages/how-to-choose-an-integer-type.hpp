@@ -1,5 +1,5 @@
 tags::h2(text("How to choose an integer type")) + compile(R"(
-(created 2017-04-05, updated 2017-04-05)
+(created 2017-04-05, updated 2017-04-09)
 
 Prefer portable types like `std::uint32_t` over the types without an
 explicit range. Use `int`, `long`, `long long`
