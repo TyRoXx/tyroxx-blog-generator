@@ -29,8 +29,14 @@ to unportable code and misunderstandings.)") +
 
 The other major kind of integer types are the pointery ones: `std::size_t`, `std::ptrdiff_t` and `std::uintptr_t`.
 They are used when dealing with memory on the current machine. `int` cannot store the sizes of objects on most contemporary
-machines. `size_t` can. Use `size_t`. `ptrdiff_t` is for differences between memory addresses. It is signed because a
-difference can be negative. `uintptr_t` is for manipulating pointers on the bit level. If you did not know about `uintptr_t`
+machines. `size_t` can. Use `size_t`.)") +
+    tags::table(
+            header_row(Si::html::text("Command"), Si::html::text("Usage"))+
+        row(compile("`ptrdiff_t`"),
+            Si::html::text("signed difference between memory addresses")) +
+        row(compile("`uintptr_t`"),
+            Si::html::text("manipulating pointers on the bit level"))) +
+    compile(R"(If you did not know about `uintptr_t`
 before reading this article, chances are you won't need this type any soon. `size_t` and `ptrdiff_t` are two of the most
 important types in C++ you have to know and make use of. This is a very small function how it would be written by someone
 who does not waste a single thought on choosing the right type.)") +
