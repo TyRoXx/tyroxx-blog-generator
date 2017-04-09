@@ -138,6 +138,12 @@ namespace tags
 	}
 
 	template <class Element>
+	auto th(Element &&content)
+	{
+		return Si::html::tag("th", std::forward<Element>(content));
+	}
+
+	template <class Element>
 	auto tbody(Element &&content)
 	{
 		return Si::html::tag("tbody", std::forward<Element>(content));

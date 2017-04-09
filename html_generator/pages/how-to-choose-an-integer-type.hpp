@@ -31,7 +31,7 @@ The other major kind of integer types are the pointery ones: `std::size_t`, `std
 They are used when dealing with memory on the current machine. `int` cannot store the sizes of objects on most contemporary
 machines. `size_t` can. Use `size_t`.)") +
     tags::table(
-            header_row(Si::html::text("Command"), Si::html::text("Usage"))+
+        header_row(Si::html::text("Command"), Si::html::text("Usage")) +
         row(compile("`ptrdiff_t`"),
             Si::html::text("signed difference between memory addresses")) +
         row(compile("`uintptr_t`"),
