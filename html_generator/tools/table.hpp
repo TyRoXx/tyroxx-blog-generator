@@ -1,3 +1,7 @@
+#pragma once
+
+#include <html_generator/tags.hpp>
+
 namespace
 {
 	namespace detail

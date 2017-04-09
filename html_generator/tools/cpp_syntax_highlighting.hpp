@@ -1,5 +1,5 @@
 #pragma once
-#include "tags.hpp"
+#include "html_generator/tags.hpp"
 
 inline bool is_brace(char const c)
 {

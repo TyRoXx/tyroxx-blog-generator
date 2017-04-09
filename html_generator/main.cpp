@@ -1,4 +1,4 @@
-#include "cpp_syntax_highlighting.hpp"
+#include "html_generator/tools/cpp_syntax_highlighting.hpp"
 #include <beast/core/streambuf.hpp>
 #include <beast/http/read.hpp>
 #include <beast/http/string_body.hpp>

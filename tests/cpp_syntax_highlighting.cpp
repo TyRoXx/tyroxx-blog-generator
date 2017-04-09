@@ -1,4 +1,4 @@
-#include "html_generator/cpp_syntax_highlighting.hpp"
+#include "html_generator/tools/cpp_syntax_highlighting.hpp"
 #include <boost/test/unit_test.hpp>
 
 namespace
