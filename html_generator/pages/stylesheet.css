@@ -45,7 +45,7 @@ footer {
 	margin-bottom: 1em;
 }
 
-/* Formating the source code and its snippets*/
+/* Formatting the source code and its snippets*/
 .sourcecodeSnippet{
     margin: 1em 0;
 }
@@ -67,11 +67,24 @@ footer {
 .sourcecodeSnippet code {
 	display: block;
 	width: 0;
-	overflow: auto none;
 }
 .inlineCodeSnippet {
     display: inline;
     font-size: 125%;
+}
+
+/* Formatting tables */
+table{
+    width: 100%;
+}
+
+table, th, td{
+    border: 2px solid black;
+    border-collapse: collapse;
+}
+
+th, td{
+    padding: .5em;
 }
 
 /* Formatting the code highlighting */
