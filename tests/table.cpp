@@ -29,3 +29,15 @@ BOOST_AUTO_TEST_CASE(table_syntactic_sugar)
 	                  "td><td>def</td></tr></table>",
 	                  html_generated);
 }
+
+
+BOOST_AUTO_TEST_CASE(table_head)
+{
+    std::string html_generated;
+    auto erased_html_sink = Si::Sink<char, Si::success>::erase(
+            Si::make_container_sink(html_generated));
+    tags::table(header_row(Si::html::text("123"), Si::html::text("abc")) +
+                row(Si::html::text("456"), Si::html::text("def")))
+            .generate(erased_html_sink);
+    BOOST_CHECK_EQUAL("<table><thead><tr><th>123</th><th>abc</th></tr></thead><tr><td>456</td><td>def</td></tr></table>",html_generated);
+}
