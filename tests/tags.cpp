@@ -6,9 +6,10 @@ BOOST_AUTO_TEST_CASE(checking_empty_html)
 	std::string html_generated;
 	auto erased_html_sink = Si::Sink<char, Si::success>::erase(
 	    Si::make_container_sink(html_generated));
-	const auto &content =
+	auto content =
 	    tags::menu(tags::p("Content")) + tags::footer(tags::p("Copyright"));
-	tags::html(tags::head(tags::title("Title")) + tags::body(content))
+	tags::html(tags::head(tags::title("Title")) +
+	           tags::body(std::move(content)))
 	    .generate(erased_html_sink);
 	BOOST_CHECK_EQUAL("<html><head><title>Title</title></"
 	                  "head><body><menu><p>Content</p></"
