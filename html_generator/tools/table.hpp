@@ -1,3 +1,7 @@
+#pragma once
+
+#include <html_generator/tags.hpp>
+
 namespace
 {
 	namespace detail
@@ -43,7 +47,7 @@ namespace
 	template <class... Elements>
 	auto header_row(Elements &&... cells)
 	{
-		return tags::thead(
-		    detail::join_table_heads(std::forward<Elements>(cells)...));
+		return tags::thead(tags::tr(
+		    detail::join_table_heads(std::forward<Elements>(cells)...)));
 	}
 }

@@ -5,19 +5,19 @@ namespace tags
 {
 	//----------------TITLE tag----------------
 	template <class Element>
-	auto html(Element &&content)
+	inline auto html(Element &&content)
 	{
 		return Si::html::tag("html", std::forward<Element>(content));
 	}
 
 	template <class Element>
-	auto head(Element &&content)
+	inline auto head(Element &&content)
 	{
 		return Si::html::tag("head", std::forward<Element>(content));
 	}
 
 	template <class Element>
-	auto body(Element &&content)
+	inline auto body(Element &&content)
 	{
 		return Si::html::tag("body", std::forward<Element>(content));
 	}
@@ -31,7 +31,7 @@ namespace tags
 
 	//----------------H1 tag----------------
 	template <class Element>
-	auto h1(Element &&content)
+	inline auto h1(Element &&content)
 	{
 		using namespace Si::html;
 		return tag("h1", std::forward<Element>(content));
@@ -39,7 +39,7 @@ namespace tags
 
 	//----------------H2 tag----------------
 	template <class Element>
-	auto h2(Element &&content)
+	inline auto h2(Element &&content)
 	{
 		using namespace Si::html;
 		return tag("h2", std::forward<Element>(content));
@@ -47,7 +47,7 @@ namespace tags
 
 	//----------------H3 tag----------------
 	template <class Element>
-	auto h3(Element &&content)
+	inline auto h3(Element &&content)
 	{
 		using namespace Si::html;
 		return tag("h3", std::forward<Element>(content));
@@ -55,7 +55,7 @@ namespace tags
 
 	//----------------H4 tag----------------
 	template <class Element>
-	auto h4(Element &&content)
+	inline auto h4(Element &&content)
 	{
 		using namespace Si::html;
 		return tag("h4", std::forward<Element>(content));
@@ -63,14 +63,14 @@ namespace tags
 
 	//----------------MENU tag----------------
 	template <class Element>
-	auto menu(Element &&content)
+	inline auto menu(Element &&content)
 	{
 		return Si::html::tag("menu", std::forward<Element>(content));
 	}
 
 	//----------------FOOTER tag----------------
 	template <class Element>
-	auto footer(Element &&content)
+	inline auto footer(Element &&content)
 	{
 		return Si::html::tag("footer", std::forward<Element>(content));
 	}
@@ -83,7 +83,7 @@ namespace tags
 	}
 
 	template <class Element, class Attributes>
-	auto p(Attributes &&attributes, Element &&content)
+	inline auto p(Attributes &&attributes, Element &&content)
 	{
 		return Si::html::tag("p", std::forward<Attributes>(attributes),
 		                     std::forward<Element>(content));
@@ -91,13 +91,13 @@ namespace tags
 
 	//----------------DIV tag----------------
 	template <class Element>
-	auto div(Element &&content)
+	inline auto div(Element &&content)
 	{
 		return Si::html::tag("div", std::forward<Element>(content));
 	}
 
 	template <class Element, class Attributes>
-	auto div(Attributes &&attributes, Element &&content)
+	inline auto div(Attributes &&attributes, Element &&content)
 	{
 		return Si::html::tag("div", std::forward<Attributes>(attributes),
 		                     std::forward<Element>(content));
@@ -111,7 +111,7 @@ namespace tags
 	}
 
 	template <class Element, class Attributes>
-	auto span(Attributes &&attributes, Element &&content)
+	inline auto span(Attributes &&attributes, Element &&content)
 	{
 		return Si::html::tag("span", std::forward<Attributes>(attributes),
 		                     std::forward<Element>(content));
@@ -119,13 +119,13 @@ namespace tags
 
 	//----------------table tags----------------
 	template <class Element>
-	auto table(Element &&content)
+	inline auto table(Element &&content)
 	{
 		return Si::html::tag("table", std::forward<Element>(content));
 	}
 
 	template <class Element>
-	auto table(std::string const &summary, Element &&content)
+	inline auto table(std::string const &summary, Element &&content)
 	{
 		return Si::html::tag("table", Si::html::attribute("summary", summary),
 		                     std::forward<Element>(content));
@@ -144,13 +144,13 @@ namespace tags
 	}
 
 	template <class Element>
-	auto tbody(Element &&content)
+	inline auto tbody(Element &&content)
 	{
 		return Si::html::tag("tbody", std::forward<Element>(content));
 	}
 
 	template <class Element>
-	auto tfoot(Element &&content)
+	inline auto tfoot(Element &&content)
 	{
 		return Si::html::tag("tfoot", std::forward<Element>(content));
 	}
@@ -164,14 +164,14 @@ namespace tags
 
 	//----------------TD tag----------------
 	template <class Element>
-	auto td(Element &&content)
+	inline auto td(Element &&content)
 	{
 		return Si::html::tag("td", std::forward<Element>(content));
 	}
 
 	//----------------UL tag----------------
 	template <class Element>
-	auto ul(Element &&content)
+	inline auto ul(Element &&content)
 	{
 		return Si::html::tag("ul", std::forward<Element>(content));
 	}
@@ -185,27 +185,27 @@ namespace tags
 
 	//----------------LI tag----------------
 	template <class Element>
-	auto li(Element &&content)
+	inline auto li(Element &&content)
 	{
 		return Si::html::tag("li", std::forward<Element>(content));
 	}
 
 	//----------------PRE tag----------------
 	template <class Element>
-	auto pre(Element &&content)
+	inline auto pre(Element &&content)
 	{
 		return Si::html::tag("pre", std::forward<Element>(content));
 	}
 
 	template <class Element, class Attributes>
-	auto pre(Attributes &&attributes, Element &&content)
+	inline auto pre(Attributes &&attributes, Element &&content)
 	{
 		return Si::html::tag("pre", std::forward<Attributes>(attributes),
 		                     std::forward<Element>(content));
 	}
 
 	template <class Attributes>
-	auto br(Attributes &&attributes)
+	inline auto br(Attributes &&attributes)
 	{
 		using namespace Si::html;
 		return tag("br", std::forward<Attributes>(attributes), empty);
@@ -238,9 +238,9 @@ namespace tags
 
 	// PSEUDO TAG: link (emulates the a-tag)
 	template <std::size_t N>
-	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N],
-	          std::string const &caption)
+	inline auto link(std::string const &protocol,
+	                 char const(&address_without_protocol)[N],
+	                 std::string const &caption)
 	{
 		using namespace Si::html;
 		return dynamic(
@@ -262,8 +262,8 @@ namespace tags
 	}
 
 	template <std::size_t N>
-	auto link(std::string const &protocol,
-	          char const(&address_without_protocol)[N])
+	inline auto link(std::string const &protocol,
+	                 char const(&address_without_protocol)[N])
 	{
 		return link(protocol, address_without_protocol,
 		            address_without_protocol);
@@ -271,7 +271,7 @@ namespace tags
 
 	// PSEUDO ATTRIBUTE: anchor_attributes (emulates a jump mark on a page)
 	template <std::size_t N>
-	auto anchor_attributes(char const(&name)[N])
+	inline auto anchor_attributes(char const(&name)[N])
 	{
 		using namespace Si::html;
 		return attribute("name", name) + href(std::string("#") + name);

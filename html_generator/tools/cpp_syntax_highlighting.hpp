@@ -1,6 +1,5 @@
 #pragma once
-#include "tags.hpp"
-#include <silicium/html/tree.hpp>
+#include "html_generator/tags.hpp"
 
 inline bool is_brace(char const c)
 {
@@ -131,14 +130,11 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		{
 			bool is_end = true;
 			return {std::string(begin, std::find_if(begin + 1, end,
-			                                        [&is_end](char c)
+			                                        [&](char c)
 			                                        {
-				                                        if (is_end)
+				                                        if (is_end && c == '/')
 				                                        {
-					                                        if (c == '/')
-					                                        {
-						                                        return true;
-					                                        }
+					                                        return true;
 				                                        }
 				                                        is_end = (c == '*');
 				                                        return false;

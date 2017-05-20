@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-#include "html_generator/cpp_syntax_highlighting.hpp"
-#include "html_generator/tags.hpp"
+#include "cpp_syntax_highlighting.hpp"
 #include "html_generator/snippets.h"
 
 enum class markdown_types
@@ -28,7 +27,7 @@ std::string find_next_paragraph(RandomAccessIterator begin,
 	}
 	bool is_new_line = false;
 	return std::string(begin,
-	                   std::find_if(begin + 1, end, [&is_new_line](char c)
+	                   std::find_if(begin + 1, end, [&](char c)
 	                                {
 		                                if (is_new_line && is_line_end(c))
 			                                return true;
