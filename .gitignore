@@ -1,3 +1,6 @@
 CMakeLists.txt.user
 .idea
 cmake-build-debug
+conanbuildinfo.cmake
+conaninfo.txt
+html_generator/pages/sub1/
