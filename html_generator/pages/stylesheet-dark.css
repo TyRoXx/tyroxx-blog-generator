@@ -1,0 +1,22 @@
+body{
+	background-color: #333333;
+	color: white;
+}
+
+/* Overriding the keyword color */
+code .keyword {
+	color: cyan;	
+}
+code .names {
+	color: #FF66FF;
+}
+code .stringLiteral {
+	color: red;
+}
+code .preprocessor{
+    color: #00CD00;
+}
+
+code .comment{
+    color: #00CD00;
+}
