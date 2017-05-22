@@ -11,6 +11,9 @@
 #include <ventura/read_file.hpp>
 #include <html_generator/tools/all.hpp>
 
+void copy_directory(ventura::absolute_path origin,
+                    const Si::optional<ventura::absolute_path> destination);
+
 namespace
 {
 
@@ -55,11 +58,18 @@ namespace
 		    tags::title(site_title) +
 		    tag("link",
 		        tags::href("stylesheets.css") + attribute("rel", "stylesheet"),
+		        empty) +
+		    tag("link", tags::href("stylesheets-dark.css") +
+		                    attribute("rel", "stylesheet"),
 		        empty));
-		auto body_content =
-		    tags::body(tags::h1(text(site_title)) + std::move(page_content) +
+		auto body_content = tags::body(
+		    tags::h1(text(site_title)) +
+		    tags::a(tags::href(
+		                "javascript:document.body.classList.toggle(`dark`);"),
+		            text("Toggle")) +
+		    std::move(page_content) +
 #include "pages/footer.hpp"
-		               );
+		    );
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    tags::html(std::move(head_content) + std::move(body_content));
@@ -282,6 +292,7 @@ int main(int argc, const char **argv)
 		return 1;
 	}
 
+	// Setting directory
 	Si::optional<ventura::absolute_path> const output_root =
 	    ventura::absolute_path::create(output_option);
 	if (!output_root)
@@ -304,12 +315,17 @@ int main(int argc, const char **argv)
 
 	ventura::absolute_path repo = *ventura::parent(
 	    *ventura::parent(*ventura::absolute_path::create(__FILE__)));
+
+	// Copying the assets
 	ventura::copy(
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
-	ventura::copy(
-			repo / ventura::relative_path("html_generator/pages/stylesheet-dark.css"),
-			*output_root / ventura::relative_path("stylesheets-dark.css"), Si::return_);
+	ventura::copy(repo / ventura::relative_path(
+	                         "html_generator/pages/stylesheet-dark.css"),
+	              *output_root / ventura::relative_path("stylesheets-dark.css"),
+	              Si::return_);
+
+	// Generating the files
 	static const boost::string_ref files_to_generate[] = {"index.html"};
 	for (boost::string_ref const file : files_to_generate)
 	{
@@ -322,8 +338,12 @@ int main(int argc, const char **argv)
 		}
 	}
 
-	if (!vm.count("serve"))	{ return 0; }
+	if (!vm.count("serve"))
+	{
+		return 0;
+	}
 
+	// Starting the server
 	try
 	{
 		using namespace boost::asio;
@@ -331,12 +351,12 @@ int main(int argc, const char **argv)
 		io_service io;
 
 		ip::tcp::acceptor acceptor_v6(
-			io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
+		    io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
 		acceptor_v6.listen();
 		begin_accept(acceptor_v6, *output_root);
 
 		ip::tcp::acceptor acceptor_v4(
-			io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
+		    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
 		acceptor_v4.listen();
 		begin_accept(acceptor_v4, *output_root);
 
@@ -349,7 +369,7 @@ int main(int argc, const char **argv)
 			catch (boost::system::system_error const &ex)
 			{
 				std::cerr << "boost::system::system_error: " << ex.code()
-						  << '\n';
+				          << '\n';
 				io.reset();
 			}
 			catch (std::exception const &ex)
