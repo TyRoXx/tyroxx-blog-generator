@@ -307,6 +307,9 @@ int main(int argc, const char **argv)
 	ventura::copy(
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
+	ventura::copy(
+			repo / ventura::relative_path("html_generator/pages/stylesheet-dark.css"),
+			*output_root / ventura::relative_path("stylesheets-dark.css"), Si::return_);
 	static const boost::string_ref files_to_generate[] = {"index.html"};
 	for (boost::string_ref const file : files_to_generate)
 	{
@@ -319,52 +322,51 @@ int main(int argc, const char **argv)
 		}
 	}
 
-	if (vm.count("serve"))
+	if (!vm.count("serve"))	{ return 0; }
+
+	try
 	{
-		try
+		using namespace boost::asio;
+
+		io_service io;
+
+		ip::tcp::acceptor acceptor_v6(
+			io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
+		acceptor_v6.listen();
+		begin_accept(acceptor_v6, *output_root);
+
+		ip::tcp::acceptor acceptor_v4(
+			io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
+		acceptor_v4.listen();
+		begin_accept(acceptor_v4, *output_root);
+
+		while (!io.stopped())
 		{
-			using namespace boost::asio;
-
-			io_service io;
-
-			ip::tcp::acceptor acceptor_v6(
-			    io, ip::tcp::endpoint(ip::tcp::v6(), web_server_port), true);
-			acceptor_v6.listen();
-			begin_accept(acceptor_v6, *output_root);
-
-			ip::tcp::acceptor acceptor_v4(
-			    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
-			acceptor_v4.listen();
-			begin_accept(acceptor_v4, *output_root);
-
-			while (!io.stopped())
+			try
 			{
-				try
-				{
-					io.run();
-				}
-				catch (boost::system::system_error const &ex)
-				{
-					std::cerr << "boost::system::system_error: " << ex.code()
-					          << '\n';
-					io.reset();
-				}
-				catch (std::exception const &ex)
-				{
-					std::cerr << "std::exception: " << ex.what() << '\n';
-					io.reset();
-				}
+				io.run();
+			}
+			catch (boost::system::system_error const &ex)
+			{
+				std::cerr << "boost::system::system_error: " << ex.code()
+						  << '\n';
+				io.reset();
+			}
+			catch (std::exception const &ex)
+			{
+				std::cerr << "std::exception: " << ex.what() << '\n';
+				io.reset();
 			}
 		}
-		catch (boost::system::system_error const &ex)
-		{
-			std::cerr << "boost::system::system_error: " << ex.code() << '\n';
-			return 1;
-		}
-		catch (std::exception const &ex)
-		{
-			std::cerr << "std::exception: " << ex.what() << '\n';
-			return 1;
-		}
+	}
+	catch (boost::system::system_error const &ex)
+	{
+		std::cerr << "boost::system::system_error: " << ex.code() << '\n';
+		return 1;
+	}
+	catch (std::exception const &ex)
+	{
+		std::cerr << "std::exception: " << ex.what() << '\n';
+		return 1;
 	}
 }
