@@ -64,8 +64,9 @@ namespace
 		        empty));
 		auto body_content = tags::body(
 		    tags::h1(text(site_title)) +
-		    tags::a(tags::href(
-		                "javascript:document.body.classList.toggle(`dark`);"),
+		    tags::a(tags::href("javascript:void(0);") +
+		                attribute("onlick",
+		                          "document.body.classList.toggle(`dark`);"),
 		            text("Toggle")) +
 		    std::move(page_content) +
 #include "pages/footer.hpp"
