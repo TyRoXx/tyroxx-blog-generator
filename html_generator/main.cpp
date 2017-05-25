@@ -11,9 +11,6 @@
 #include <ventura/read_file.hpp>
 #include <html_generator/tools/all.hpp>
 
-void copy_directory(ventura::absolute_path origin,
-                    const Si::optional<ventura::absolute_path> destination);
-
 namespace
 {
 
@@ -61,16 +58,15 @@ namespace
 		        empty) +
 		    tag("link", tags::href("stylesheets-dark.css") +
 		                    attribute("rel", "stylesheet"),
-		        empty));
+		        empty) +
+		    tag("script", attribute("src", "toggleTheme.js"), text(" ")));
 		auto body_content = tags::body(
 		    tags::h1(text(site_title)) +
-		    tags::a(tags::href("#") +
-		                attribute("onclick",
-		                          "document.body.classList.toggle(`dark`);"),
-		            text("Toggle")) +
+		    tags::a(tags::href("#") + attribute("onclick", "toggleTheme()"),
+		            text("Toggle theme")) +
 		    std::move(page_content) +
 #include "pages/footer.hpp"
-		    );
+		    +tag("script", text("setTheme();")));
 		auto const document =
 		    raw("<!DOCTYPE html>") +
 		    tags::html(std::move(head_content) + std::move(body_content));
@@ -321,10 +317,14 @@ int main(int argc, const char **argv)
 	ventura::copy(
 	    repo / ventura::relative_path("html_generator/pages/stylesheet.css"),
 	    *output_root / ventura::relative_path("stylesheets.css"), Si::return_);
+
 	ventura::copy(repo / ventura::relative_path(
 	                         "html_generator/pages/stylesheet-dark.css"),
 	              *output_root / ventura::relative_path("stylesheets-dark.css"),
 	              Si::return_);
+	ventura::copy(
+	    repo / ventura::relative_path("html_generator/pages/toggleTheme.js"),
+	    *output_root / ventura::relative_path("toggleTheme.js"), Si::return_);
 
 	// Generating the files
 	static const boost::string_ref files_to_generate[] = {"index.html"};
