@@ -351,10 +351,10 @@ int main(int argc, const char **argv)
 
 		io_service io;
 
-			ip::tcp::acceptor acceptor_v4(
-			    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
-			acceptor_v4.listen();
-			begin_accept(acceptor_v4, *output_root);
+		ip::tcp::acceptor acceptor_v4(
+		    io, ip::tcp::endpoint(ip::tcp::v4(), web_server_port), true);
+		acceptor_v4.listen();
+		begin_accept(acceptor_v4, *output_root);
 
 		while (!io.stopped())
 		{
