@@ -1,0 +1,24 @@
+body.dark{
+	background-color: #333333;
+	color: white;
+}
+body.dark a{
+	color: white;
+}
+
+/* Overriding the keyword color */
+body.dark code .keyword {
+	color: cyan;	
+}
+body.dark code .names {
+	color: #FF66FF;
+}
+body.dark code .stringLiteral {
+	color: red;
+}
+body.dark code .preprocessor{
+    color: #00CD00;
+}
+body.dark code .comment{
+    color: #00CD00;
+}
