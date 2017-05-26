@@ -1,5 +1,5 @@
 tags::h2(text("How to choose an integer type")) + compile(R"(
-(created 2017-04-05, updated 2017-04-05)
+(created 2017-04-05, updated 2017-04-09)
 
 Prefer portable types like `std::uint32_t` over the types without an
 explicit range. Use `int`, `long`, `long long`
@@ -31,10 +31,12 @@ The other major kind of integer types are the pointery ones: `std::size_t`, `std
 They are used when dealing with memory on the current machine. `int` cannot store the sizes of objects on most contemporary
 machines. `size_t` can. Use `size_t`.)") +
     tags::table(
-        header_row(Si::html::text("Command"), Si::html::text("Usage")) +
-        row(inline_code("ptrdiff_t"),
+        header_row(Si::html::text("Type"), Si::html::text("Purpose")) +
+        row(inline_code("std::size_t"),
+            Si::html::text("unsigned size of objects in memory")) +
+        row(inline_code("std::ptrdiff_t"),
             Si::html::text("signed difference between memory addresses")) +
-        row(inline_code("uintptr_t"),
+        row(inline_code("std::uintptr_t"),
             Si::html::text("manipulating pointers on the bit level"))) +
     compile(R"(If you did not know about `uintptr_t`
 before reading this article, chances are you won't need this type any soon. `size_t` and `ptrdiff_t` are two of the most
