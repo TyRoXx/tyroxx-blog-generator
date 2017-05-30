@@ -1,7 +1,7 @@
 #pragma once
 
 #include "html_generator/tags.hpp"
-#include "string.h"
+#include <string>
 
 inline bool is_brace(char const c)
 {
@@ -44,7 +44,7 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 	if (isalnum(*begin) || *begin == ':')
 	{
 		bool hasColon = (*begin == ':');
-		int colonCount = (*begin == ':') ? 1 : 0;
+		size_t colonCount = (*begin == ':') ? 1 : 0;
 		std::string content = std::string(
 		    begin, std::find_if(begin + 1, end, [&](char c)
 		                        {
