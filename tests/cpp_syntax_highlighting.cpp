@@ -60,16 +60,14 @@ BOOST_AUTO_TEST_CASE(render_code_raw_keyword)
 
 BOOST_AUTO_TEST_CASE(render_code_raw_scoped_identifier)
 {
-	check_code_rendering(
-	    "scope::identifier",
-	    R"(<span class="names">scope</span><span class="names">::</span><span class="names">identifier</span>)");
+	check_code_rendering("scope::identifier",
+	                     R"(<span class="names">scope::identifier</span>)");
 }
 
 BOOST_AUTO_TEST_CASE(render_code_raw_global_scoped_identifier)
 {
-	check_code_rendering(
-	    "::scope::identifier",
-	    R"(<span class="names">::</span><span class="names">scope</span><span class="names">::</span><span class="names">identifier</span>)");
+	check_code_rendering("::scope::identifier",
+	                     R"(<span class="names">::scope::identifier</span>)");
 }
 
 BOOST_AUTO_TEST_CASE(render_code_raw_space)
@@ -122,10 +120,10 @@ BOOST_AUTO_TEST_CASE(render_code_raw_realistic_example)
 	    R"(BOOST_AUTO_TEST_CASE(render_code_raw_mismatched_quotes)
 {
     BOOST_CHECK_EXCEPTION(
-        check_code_rendering(<span class="stringLiteral">&quot;\&quot;abc\&apos;&quot;</span>, <span class="stringLiteral">&quot;&quot;</span>), <span class="names">std</span><span class="names">::</span><span class="names">invalid_argument</span>,
-        [](<span class="names">std</span><span class="names">::</span><span class="names">invalid_argument</span> <span class="keyword">const</span> &amp;ex)
+        check_code_rendering(<span class="stringLiteral">&quot;\&quot;abc\&apos;&quot;</span>, <span class="stringLiteral">&quot;&quot;</span>), <span class="names">std::invalid_argument</span>,
+        [](<span class="names">std::invalid_argument</span> <span class="keyword">const</span> &amp;ex)
         {
-            <span class="keyword">return</span> (<span class="names">std</span><span class="names">::</span><span class="names">string</span>(<span class="stringLiteral">&quot;Number of quotes must be even&quot;</span>) == ex.what());
+            <span class="keyword">return</span> (<span class="names">std::string</span>(<span class="stringLiteral">&quot;Number of quotes must be even&quot;</span>) == ex.what());
         });
 })");
 }
