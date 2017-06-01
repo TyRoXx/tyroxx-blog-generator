@@ -30,9 +30,7 @@ std::string find_next_paragraph(RandomAccessIterator begin,
 	                   std::find_if(begin + 1, end, [&](char c)
 	                                {
 		                                if (is_new_line && is_line_end(c))
-		                                {
 			                                return true;
-		                                }
 		                                is_new_line = is_line_end(c);
 		                                return false;
 		                            }));
@@ -65,7 +63,7 @@ markdown_token find_next_mark_down_token(RandomAccessIterator &begin,
 	        markdown_types::text};
 }
 
-inline auto compile_paragraph(std::string source)
+auto compile_paragraph(std::string source)
 {
 	return Si::html::dynamic([source =
 	                              std::move(source)](Si::html::code_sink & sink)
@@ -80,28 +78,25 @@ inline auto compile_paragraph(std::string source)
 			                         {
 			                         case markdown_types::eof:
 				                         return;
-
 			                         case markdown_types::inline_code:
 				                         inline_code(token.content)
 				                             .generate(sink);
 				                         i += 1;
 				                         break;
-
 			                         case markdown_types::text:
-				                         if ((token.content.size() != 1) ||
-				                             !is_line_end(token.content[0]))
+				                         if (!(token.content.size() == 1 &&
+				                               is_line_end(token.content[0])))
 				                         {
 					                         Si::html::text(token.content)
 					                             .generate(sink);
 				                         }
-				                         break;
 			                         }
 			                         i += token.content.size();
 		                         }
 		                     });
 }
 
-inline auto compile(std::string source)
+auto compile(std::string source)
 {
 	return Si::html::dynamic([source =
 	                              std::move(source)](Si::html::code_sink & sink)
@@ -116,11 +111,10 @@ inline auto compile(std::string source)
 				                         return;
 			                         }
 
-			                         i += paragraph.size();
 			                         Si::html::tag("p",
-			                                       compile_paragraph(
-			                                           std::move(paragraph)))
+			                                       compile_paragraph(paragraph))
 			                             .generate(sink);
+			                         i += paragraph.size();
 		                         }
 
 		                     });
