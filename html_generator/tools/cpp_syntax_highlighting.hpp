@@ -1,5 +1,7 @@
 #pragma once
+
 #include "html_generator/tags.hpp"
+#include <string>
 
 inline bool is_brace(char const c)
 {
@@ -39,28 +41,33 @@ token find_next_token(RandomAccessIterator begin, RandomAccessIterator end)
 		return {"", token_type::eof};
 	}
 	// Detecting identifier
-	if (isalnum(*begin))
+	if (isalnum(*begin) || *begin == ':')
 	{
-		return {std::string(begin, std::find_if(begin + 1, end,
-		                                        [](char c)
-		                                        {
-			                                        return !isalnum(c) &&
-			                                               c != '_';
-			                                    })),
-		        token_type::identifier};
-	}
-	// Detecting name spaces
-	if (*begin == ':')
-	{
-		if (begin + 1 == end)
+		bool hasColon = (*begin == ':');
+		size_t colonCount = (*begin == ':') ? 1 : 0;
+		std::string content = std::string(
+		    begin, std::find_if(begin + 1, end, [&](char c)
+		                        {
+			                        if (c == ':')
+			                        {
+				                        hasColon = true;
+				                        colonCount++;
+			                        }
+			                        else if (colonCount % 2 != 0)
+			                        {
+				                        return true;
+			                        }
+			                        return !isalnum(c) && c != '_' && c != ':';
+			                    }));
+		if (!hasColon)
 		{
-			return {":", token_type::other};
+			return {content, token_type::identifier};
 		}
-		if (begin[1] != ':')
+		if (colonCount % 2 == 0)
 		{
-			return {std::string(begin, begin + 2), token_type::other};
+			return {content, token_type::double_colon};
 		}
-		return {"::", token_type::double_colon};
+		return {content, token_type::other};
 	}
 	// Detecting whitespaces
 	if (!isprint(*begin))
@@ -206,7 +213,6 @@ inline auto render_code_raw(std::string code)
 		               for (;;)
 		               {
 			               token t = find_next_token(i, code.end());
-		               token_switch:
 			               switch (t.type)
 			               {
 			               case token_type::eof:
@@ -238,38 +244,18 @@ inline auto render_code_raw(std::string code)
 					               tags::span(attribute("class", "keyword"),
 					                          text(t.content))
 					                   .generate(sink);
-					               break;
 				               }
 				               else
 				               {
-					               i += t.content.size();
-					               token next = find_next_token(i, code.end());
-					               if (next.type == token_type::double_colon)
-					               {
-						               tags::span(attribute("class", "names"),
-						                          text(t.content))
-						                   .generate(sink);
-					               }
-					               else
-					               {
-						               text(t.content).generate(sink);
-					               }
-					               t = next;
-					               goto token_switch;
+					               text(t.content).generate(sink);
 				               }
+				               break;
 
 			               case token_type::double_colon:
-				               while (t.type == token_type::identifier ||
-				                      t.type == token_type::double_colon)
-				               {
-					               tags::span(attribute("class", "names"),
-					                          text(t.content))
-					                   .generate(sink);
-					               i += t.content.size();
-					               t = find_next_token(i, code.end());
-				               }
-				               goto token_switch;
-
+				               tags::span(attribute("class", "names"),
+				                          text(t.content))
+				                   .generate(sink);
+				               break;
 			               case token_type::space:
 			               case token_type::other:
 			               case token_type::brace:
