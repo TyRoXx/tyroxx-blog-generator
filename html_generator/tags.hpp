@@ -183,6 +183,20 @@ namespace tags
 		                     std::forward<Element>(content));
 	}
 
+	//----------------UL tag----------------
+	template <class Element>
+	inline auto ol(Element &&content)
+	{
+		return Si::html::tag("ol", std::forward<Element>(content));
+	}
+
+	template <class Element, class Attributes>
+	auto ol(Attributes &&attributes, Element &&content)
+	{
+		return Si::html::tag("ol", std::forward<Attributes>(attributes),
+							 std::forward<Element>(content));
+	}
+
 	//----------------LI tag----------------
 	template <class Element>
 	inline auto li(Element &&content)
