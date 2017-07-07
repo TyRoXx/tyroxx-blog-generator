@@ -42,7 +42,7 @@ script:
  - pushd bin
  - ./tests || exit 1
  - ./html_generator "$(pwd)/test" || exit 1
- - if ["$TRAVIS_PULL_REQUEST" == "false"] && [ "$CPP" == "g++-4.9" ] && [ "$BUILD_TYPE" == "Release" ]; then
+ - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$CPP" == "g++-4.9" ] && [ "$BUILD_TYPE" == "Release" ]; then
      message=$(git log --oneline -1);
      git clone https://github.com/TyRoXx/tyroxx.github.io.git || exit 1;
      cd tyroxx.github.io;
